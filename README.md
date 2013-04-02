@@ -1,4 +1,5 @@
-cardboard-box
+Cardboard Box
 =============
 
-Cardboard Box is a Windows Phone 7 client for image boards running various flavors of Danbooru.
+Cardboard Box is a Windows Phone 7 client for the image board Danbooru.Donmai.us.
+
