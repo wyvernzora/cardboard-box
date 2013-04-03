@@ -104,7 +104,8 @@
 			</Grid.RowDefinitions>
 			
 			<TextBlock Margin="0" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Center" Foreground="#FF7A7A7A"><Run Text="USERNAME"/><LineBreak/><Run/></TextBlock>
-			<TextBlock Margin="0,2.4,0,-2.4" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Center" Foreground="#FF7A7A7A" Grid.Row="2" Text="PASSWORD "/>
+			<TextBlock Margin="0,2.4,0,-2.4" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Center" Foreground="#FF7A7A7A" Grid.Row="2" Text="PASSWORD
+"/>
 			
 			<TextBox x:Name="TextboxUsername" Margin="0,0,0,-2.4" Grid.Row="1" TextWrapping="Wrap"/>
 			<PasswordBox x:Name="TextboxPassword" Margin="0,0.4,0,-0.4" Grid.Row="3"/>
@@ -120,6 +121,7 @@
 				<Image Margin="0" Source="error.png"/>
 				<TextBlock x:Name="TextBlockError" Grid.Column="1" Margin="8,0" TextWrapping="Wrap" Text="Error description goes here." VerticalAlignment="Center"/>
 			</Grid>
+			<Image x:Name="ImgChibi" Margin="8" Grid.Row="7" Width="236" Height="236" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 		</Grid>
 		<Image x:Name="AppBanner" Margin="8,0" Source="banner-dark.png"/>
 		

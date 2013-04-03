@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows;
@@ -9,7 +10,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Resources;
 using System.Windows.Shapes;
+using CardboardBox.Barlox;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
 using libDanbooru2;
@@ -27,6 +30,15 @@ namespace CardboardBox
             String bannerUrl = App.IsInDarkTheme() ? "/Assets/banner-dark.png" : "/Assets/banner-light.png";
             BitmapImage bannerSrc = new BitmapImage(new Uri(bannerUrl, UriKind.Relative));
             AppBanner.Source = bannerSrc;
+
+            // Load Barlox Animation
+            StreamResourceInfo animData = Application.GetResourceStream(new Uri("Assets/chibi-small.bxa", UriKind.Relative));
+            BarloxAnimation animation = new BarloxAnimation(animData.Stream);
+            animation.FrameChanged += (@s, e) =>
+                {
+                    ImgChibi.Source = e.NewFrame.Source;
+                };
+            animation.IsEnabled = true;
 
             // Attach Event Handlers
             AttachEventHandlers();

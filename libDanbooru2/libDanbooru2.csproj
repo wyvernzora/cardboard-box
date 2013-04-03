@@ -57,6 +57,9 @@
     <Compile Include="Core\NumericOps.cs" />
     <Compile Include="DanbooruCredentials.cs" />
     <Compile Include="DanbooruRequest.cs" />
+    <Compile Include="IO\ExPartStream.cs" />
+    <Compile Include="IO\ExStream.cs" />
+    <Compile Include="IO\ExStreamBase.cs" />
     <Compile Include="Post.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tag.cs" />
