@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using libDanbooru2;
 
 namespace CardboardBox
 {
@@ -136,6 +137,24 @@ namespace CardboardBox
             // Remove this handler since it is no longer needed
             RootFrame.Navigated -= CompleteInitializePhoneApplication;
         }
+
+        #endregion
+
+        #region Static Session Data
+
+        /// <summary>
+        /// Checks if user is running the app in light theme or dark theme.
+        /// </summary>
+        /// <returns>True if dark theme; false otherwise.</returns>
+        public static Boolean IsInDarkTheme()
+        {
+            return ((Visibility)Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible);
+        }
+
+        /// <summary>
+        /// Gets or sets credentials for current session
+        /// </summary>
+        public static DanbooruCredentials Credentials { get; set; }
 
         #endregion
     }
