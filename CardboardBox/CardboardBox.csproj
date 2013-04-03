@@ -96,6 +96,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\banner-light.png" />
+    <Resource Include="Assets\panorama-background-dark.png" />
+    <Resource Include="Assets\panorama-background-light.png" />
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

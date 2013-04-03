@@ -110,27 +110,35 @@ namespace libDanbooru2
             if (result == null) throw new Exception();
             HttpWebRequest request = result.AsyncState as HttpWebRequest;
             if (request == null) throw new Exception();
-            HttpWebResponse response = (HttpWebResponse) request.EndGetResponse(result);
 
-            // Get Response Object
-            queryStatus = (Int32)response.StatusCode;
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                try
+                HttpWebResponse response = (HttpWebResponse) request.EndGetResponse(result);
+
+                // Get Response Object
+                queryStatus = (Int32) response.StatusCode;
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
+
                     var serializer = new DataContractJsonSerializer(typeof(T));
                     queryResult = serializer.ReadObject(response.GetResponseStream()) as T;
+
                 }
-                catch (Exception)
-                {
-                    queryStatus = (Int32) HttpStatusCode.ExpectationFailed;
-                    queryResult = null;
-                }
+            }
+            catch (System.Net.WebException)
+            {
+                queryStatus = (Int32)HttpStatusCode.Forbidden;
+                queryResult = null;
+            }
+            catch (Exception)
+            {
+                queryStatus = (Int32)HttpStatusCode.ExpectationFailed;
+                queryResult = null;
             }
 
             // Raise Event
             if (responseReceived != null)
-                responseReceived(this, new EventArgs());
+                 responseReceived(this, new EventArgs());
         }
 
         #endregion
