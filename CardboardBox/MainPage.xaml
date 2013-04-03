@@ -14,20 +14,31 @@
     shell:SystemTray.IsVisible="True">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
+    <Grid x:Name="LayoutRoot">
+    	<Grid.RowDefinitions>
+    		<RowDefinition/>
+    		<RowDefinition Height="20"/>
+    		<RowDefinition Height="Auto"/>
+    	</Grid.RowDefinitions>
+    	<ProgressBar Margin="45,0" Grid.Row="1" IsIndeterminate="True" Visibility="Collapsed"/>
+    	<Image Grid.Row="0" Margin="60,60,60,10" VerticalAlignment="Bottom" Source="logo-dummy.png"/>
+		<Grid Grid.Row="2" Margin="30,15,30,30" Height="350" >
+			<Grid.RowDefinitions>
+				<RowDefinition Height="25"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="25"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="0.622*"/>
+			</Grid.RowDefinitions>
+			<TextBlock HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" Text="USERNAME" VerticalAlignment="Bottom" Foreground="#FF8B8B8B" FontSize="16"/>
+			<TextBlock Margin="0,0,0,-1" TextWrapping="Wrap" Text="PASSWORD" VerticalAlignment="Bottom" Foreground="#FF8B8B8B" FontSize="16" Grid.Row="2" d:LayoutOverrides="Width" HorizontalAlignment="Center"/>
+			<TextBox Margin="0" Grid.Row="1" TextWrapping="Wrap" BorderThickness="3" VerticalAlignment="Top" Height="72"/>
+			<PasswordBox Margin="0" Grid.Row="3" Height="72"/>
+		</Grid>
+		
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="MY APPLICATION" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="page name" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
-        </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0"></Grid>
     </Grid>
  
 </phone:PhoneApplicationPage>
