@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// CardboardBox/Post.cs
+// CardboardBox/User.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -25,72 +25,22 @@
 
 using System;
 using System.Runtime.Serialization;
-using System.Windows.Media.Imaging;
 
 namespace libDanbooru2
 {
     [DataContract(Name = "post")]
-    public class Post
+    public class User
     {
         [DataMember(Name = "id")]
         public Int32 ID { get; set; }
 
-        [DataMember(Name = "parent_id")]
-        public Int32? ParentID { get; set; }
+        [DataMember(Name = "name")]
+        public String Name { get; set; }
 
+        [DataMember(Name = "level")]
+        public Int32 Level { get; set; }
 
-        [DataMember(Name = "has_notes")]
-        public Boolean HasNotes { get; set; }
-
-        [DataMember(Name = "has_comments")]
-        public Boolean HasComments { get; set; }
-
-        [DataMember(Name = "has_children")]
-        public Boolean HasChildren { get; set; }
-
-
-        [DataMember(Name = "rating")]
-        public String Rating { get; set; }
-
-        [DataMember(Name = "status")]
-        public String Status { get; set; }
-
-        [DataMember(Name = "author")]
-        public String Author { get; set; }
-
-        [DataMember(Name = "score")]
-        public Int32 Score { get; set; }
-
-        [DataMember(Name = "md5")]
-        public String MD5 { get; set; }
-
-        [DataMember(Name = "source")]
-        public Uri Source { get; set; }
-
-        // File
-        [DataMember(Name = "file_url")]
-        public Uri FileUrl { get; set; }
-
-        [DataMember(Name = "height")]
-        public Int32 Height { get; set; }
-
-        [DataMember(Name = "width")]
-        public Int32 Width { get; set; }
-
-        [DataMember(Name = "file_size")]
-        public Int32 FileSize { get; set; }
-
-
-
-        [DataMember(Name = "tags")]
-        public String RawTags { get; set; }
-
-
-        #region Additional properties (not serialized)
-
-        [IgnoreDataMember]
-        public BitmapSource ImageSource { get; set; }
-
-        #endregion
+        [DataMember(Name = "created_at")]
+        public String CreatedAt { get; set; }
     }
 }

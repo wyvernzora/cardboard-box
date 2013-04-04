@@ -116,7 +116,6 @@ namespace libDanbooru2
                 HttpWebResponse response = (HttpWebResponse) request.EndGetResponse(result);
 
                 // Get Response Object
-                queryStatus = (Int32) response.StatusCode;
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
 
@@ -124,16 +123,18 @@ namespace libDanbooru2
                     queryResult = serializer.ReadObject(response.GetResponseStream()) as T;
 
                 }
+
+                queryStatus = (Int32)response.StatusCode;
             }
             catch (System.Net.WebException)
             {
-                queryStatus = (Int32)HttpStatusCode.Forbidden;
                 queryResult = null;
+                queryStatus = (Int32)HttpStatusCode.Forbidden;
             }
             catch (Exception)
             {
-                queryStatus = (Int32)HttpStatusCode.ExpectationFailed;
                 queryResult = null;
+                queryStatus = (Int32)HttpStatusCode.ExpectationFailed;
             }
 
             // Raise Event

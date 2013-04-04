@@ -97,8 +97,17 @@ namespace CardboardBox
                 if (request.Status == (int)HttpStatusCode.OK)
                 {
                     // Everything good, go to next page
-                    VisualStateManager.GoToState(this, "Default", true);
-                    NavigationService.Navigate(new Uri("/HomePage.xaml", UriKind.Relative));
+                    VisualStateManager.GoToState(this, "LoadingData", true);
+
+                    // TODO download data
+                    CardboardBoxSession.Instance.InitializeAsync(
+                        () =>
+                            {
+                                NavigationService.Navigate(new Uri("/HomePage.xaml", UriKind.Relative));
+                            }
+                        );
+
+                    //NavigationService.Navigate(new Uri("/HomePage.xaml", UriKind.Relative));
                 }
                 else if (request.Status == (int)HttpStatusCode.Forbidden)
                 {

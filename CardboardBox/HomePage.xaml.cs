@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Windows;
@@ -31,6 +34,24 @@ namespace CardboardBox
                     // Remove login screen from back stack
                     if (NavigationService.BackStack.Any())
                         NavigationService.RemoveBackEntry();
+
+                    // Add What's new Items
+                    for (int i = 0; i < 60; i++)
+                    {
+                        var post = CardboardBoxSession.Instance.WhatsNewPosts[i];
+                        using (
+                            IsolatedStorageFileStream fs =
+                                new IsolatedStorageFileStream(Constants.TileCachePath + post.ID.ToString(CultureInfo.InvariantCulture) + ".jpg",
+                                                              FileMode.Open, CardboardBoxSession.Instance.IsolatedStorage))
+                        {
+                            BitmapImage img = new BitmapImage();
+                            img.SetSource(fs);
+                            post.ImageSource = img;
+                        }
+
+                        ListBoxWhatsNew.Items.Add(post);
+                    }
+
                 };
         }
     }
