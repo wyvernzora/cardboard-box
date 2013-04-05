@@ -9,7 +9,7 @@
     <Application.Resources>
         
     	<DataTemplate x:Key="MediumPostTileTemplate">
-    		<Grid Width="90" Height="90" Margin="4">
+    		<Grid Width="90" Height="90" Margin="6">
     			<Border Margin="0" BorderThickness="1" BorderBrush="#FF393939">
     				<Image Stretch="UniformToFill" Source="{Binding ImageSource}"/>
     			</Border>

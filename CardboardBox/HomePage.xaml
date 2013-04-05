@@ -34,7 +34,7 @@
             <!--Panorama item one-->
             <controls:PanoramaItem x:Name="WhatsNewPanoramaItem" Header="what's new">
                 <Grid>
-                	<ListBox x:Name="ListBoxWhatsNew" Margin="0" ItemsPanel="{StaticResource WhatsNewListBoxPanelTemplate}" ItemTemplate="{StaticResource MediumPostTileTemplate}" Background="{x:Null}">
+                	<ListBox x:Name="ListBoxWhatsNew" Margin="0" ItemsPanel="{StaticResource WhatsNewListBoxPanelTemplate}" ItemTemplate="{StaticResource MediumPostTileTemplate}" Background="#FF2AC200">
                 		<ListBox.OpacityMask>
                 			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 				<GradientStop Color="#647A7A7A" Offset="0"/>
