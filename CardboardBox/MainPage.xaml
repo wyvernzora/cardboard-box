@@ -34,65 +34,11 @@
 				<VisualState x:Name="Default">
 					<Storyboard>
 						<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="grid" d:IsOptimized="True"/>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ProgressBarBusy">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
 						<DoubleAnimation Duration="0" To="0.995" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="AnimationWrapper" d:IsOptimized="True"/>
-					</Storyboard>
-				</VisualState>
-				<VisualState x:Name="LoggingIn">
-					<Storyboard>
-						<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="grid" d:IsOptimized="True"/>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="TextboxUsername">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<System:Boolean>False</System:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="TextboxPassword">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<System:Boolean>False</System:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="ButtonLogin">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<System:Boolean>False</System:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="ButtonSignup">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<System:Boolean>False</System:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ProgressBarBusy">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Visible</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
 					</Storyboard>
 				</VisualState>
 				<VisualState x:Name="Error">
 					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="ProgressBarBusy">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<Visibility>Collapsed</Visibility>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
 						<DoubleAnimation Duration="0" To="36" Storyboard.TargetProperty="(FrameworkElement.Height)" Storyboard.TargetName="grid" d:IsOptimized="True"/>
 					</Storyboard>
 				</VisualState>
@@ -129,7 +75,6 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="20"/>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto" MinHeight="20.666999816894531"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
@@ -139,9 +84,8 @@
 			
 				<TextBox x:Name="TextboxUsername" Margin="0,0,0,-2.4" Grid.Row="1" TextWrapping="Wrap"/>
 				<PasswordBox x:Name="TextboxPassword" Margin="0,0.4,0,-0.4" Grid.Row="3"/>
-				<Button x:Name="ButtonLogin" Content="Login" Margin="30,0" Grid.Row="6"/>
-				<ProgressBar x:Name="ProgressBarBusy" Margin="0,0.4,0,-0.733" Grid.Row="4" IsIndeterminate="True" Visibility="Collapsed"/>
-				<Grid x:Name="grid" Margin="12,0" Grid.Row="5" Height="0">
+				<Button x:Name="ButtonLogin" Content="Login" Margin="30,0" Grid.Row="5"/>
+				<Grid x:Name="grid" Margin="12,0" Grid.Row="4" Height="0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="36"/>
 						<ColumnDefinition/>

@@ -24,6 +24,10 @@ namespace CardboardBox
         // Constructor
         public MainPage()
         {
+#if DEBUG
+            App.Credentials = new DanbooruCredentials("CardboardBoxTest", "mikumiku");
+#endif
+
             InitializeComponent();
 
             // Load Appropriate Banner
@@ -46,7 +50,13 @@ namespace CardboardBox
             // Operations after page load
             Loaded += (@s, e) =>
                 {
-                    VisualStateManager.GoToState(this, "Default", false);
+                    if (App.Credentials == null)
+                        VisualStateManager.GoToState(this, "Default", false);
+                    else
+                    {
+                        TextboxUsername.Text = App.Credentials.Username;
+                        VerifyCredentials();
+                    }
                 };
 
         }
@@ -62,8 +72,6 @@ namespace CardboardBox
             // Login!!
             ButtonLogin.Click += (@s, e) =>
                 {
-                    VisualStateManager.GoToState(this, "LoggingIn", true);
-
                     // Validate Data
                     if (String.IsNullOrWhiteSpace(TextboxUsername.Text))
                     {
@@ -89,6 +97,9 @@ namespace CardboardBox
     
         private void VerifyCredentials()
         {
+            
+            VisualStateManager.GoToState(this, "LoadingData", true);
+
             DanbooruRequest<Post[]> request = new DanbooruRequest<Post[]>(App.Credentials, Constants.DanbooruPostIndexUrl);
             request.AddArgument("limit", 1);
 
@@ -97,7 +108,6 @@ namespace CardboardBox
                 if (request.Status == (int)HttpStatusCode.OK)
                 {
                     // Everything good, go to next page
-                    VisualStateManager.GoToState(this, "LoadingData", true);
 
                     // TODO download data
                     CardboardBoxSession.Instance.InitializeAsync(
