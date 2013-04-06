@@ -91,6 +91,9 @@ namespace libDanbooru2
         [IgnoreDataMember]
         public BitmapSource ImageSource { get; set; }
 
+        [IgnoreDataMember]
+        public BitmapSource LargeImageSource { get; set; }
+
         #endregion
     }
 }

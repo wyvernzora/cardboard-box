@@ -15,15 +15,15 @@ namespace CardboardBox
     /// Session data storage and interface for cache management.
     /// Can only be initialized if user credentials have been verified.
     /// </summary>
-    class CardboardBoxSession
+    class Session
     {
         #region Singleton
 
-        private static CardboardBoxSession instance;
+        private static Session instance;
 
-        public static CardboardBoxSession Instance
+        public static Session Instance
         {
-            get { return instance ?? (instance = new CardboardBoxSession()); }
+            get { return instance ?? (instance = new Session()); }
         }
 
 
@@ -34,7 +34,7 @@ namespace CardboardBox
         /// Constructor.
         /// Initializes a new instance.
         /// </summary>
-        public CardboardBoxSession()
+        public Session()
         {
             RatingLock = true; // Force rating lock
 
@@ -48,6 +48,7 @@ namespace CardboardBox
             bw.DoWork += (@s, e) =>
                 {
                     // Initialization work here
+                    Cache = new LocalCacheManager();
 
                     // Get User Profile
                     DanbooruRequest<User[]> userRequest = new DanbooruRequest<User[]>(App.Credentials, Constants.DanbooruUserIndexUrl);
@@ -70,8 +71,7 @@ namespace CardboardBox
                     WhatsNewPosts = whatNewRequest.Result;
 
                     // Update Cache
-                    foreach (var p in WhatsNewPosts)
-                        DownloadPreview(p);
+                    Cache.EnsureTileCache(WhatsNewPosts);
 
                 };
             bw.RunWorkerCompleted += (@s, e) =>
@@ -84,32 +84,11 @@ namespace CardboardBox
 
         public Boolean RatingLock { get; set; }
 
+        public LocalCacheManager Cache { get; private set; }
+
+        public Post SelectedPost { get; set; }
+
+
         public Post[] WhatsNewPosts { get; set; }
-
-        #region Isolated Storage Utilities
-
-        private IsolatedStorageFile istore;
-        public IsolatedStorageFile IsolatedStorage
-        { get { return istore ?? (istore = IsolatedStorageFile.GetUserStoreForApplication()); } }
-
-        #endregion
-
-        #region Local Image Cache
-
-        public void DownloadPreview(Post post)
-        {
-            String url = Constants.DanbooruPreviewUrl + post.MD5 + ".jpg";
-            String local = Constants.TileCachePath + post.ID.ToString() + ".jpg";
-
-            if (IsolatedStorage.FileExists(local))
-                return; // File already cached
-
-            // Download Tile
-            var idh = new ImageDownloadHelper(url, local);
-            while (!idh.Complete) ; // Wait
-        }
-
-
-        #endregion
     }
 }

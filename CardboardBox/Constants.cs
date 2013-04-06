@@ -27,5 +27,7 @@ namespace CardboardBox
         public const String DanbooruUserIndexUrl = "http://danbooru.donmai.us/user/index.json?";
 
         public const String DanbooruPreviewUrl = "http://danbooru.donmai.us/ssd/data/preview/";
+
+        public const String DanbooruDataUrl = "http://danbooru.donmai.us/data/";
     }
 }

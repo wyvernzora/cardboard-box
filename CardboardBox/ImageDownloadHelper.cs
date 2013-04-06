@@ -16,7 +16,7 @@ namespace CardboardBox
     {
         private Boolean complete = false;
 
-        public ImageDownloadHelper(String uri, String localFile)
+        public ImageDownloadHelper(String uri, String localFile, LocalCacheManager mgr)
         {
             WebClient wc = new WebClient();
             wc.OpenReadCompleted += (@s, e) =>
@@ -25,13 +25,13 @@ namespace CardboardBox
                     {
                         try
                         {
-                            if (!CardboardBoxSession.Instance.IsolatedStorage.DirectoryExists(Path.GetDirectoryName(localFile)))
-                                CardboardBoxSession.Instance.IsolatedStorage.CreateDirectory(Path.GetDirectoryName(localFile));
+                            if (!mgr.IsolatedStorage.DirectoryExists(Path.GetDirectoryName(localFile)))
+                                mgr.IsolatedStorage.CreateDirectory(Path.GetDirectoryName(localFile));
 
                             ExStream exStream = new ExStream(e.Result);
                             using (
                                 var fs = new IsolatedStorageFileStream(localFile, FileMode.Create,
-                                                                       CardboardBoxSession.Instance.IsolatedStorage))
+                                                                       mgr.IsolatedStorage))
                             {
                                 exStream.WriteTo(fs);
                             }

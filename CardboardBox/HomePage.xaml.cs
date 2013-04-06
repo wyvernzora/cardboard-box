@@ -14,6 +14,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
+using libDanbooru2;
 
 namespace CardboardBox
 {
@@ -38,21 +39,26 @@ namespace CardboardBox
                     // Add What's new Items
                     for (int i = 0; i < 60; i++)
                     {
-                        var post = CardboardBoxSession.Instance.WhatsNewPosts[i];
-                        using (
-                            IsolatedStorageFileStream fs =
-                                new IsolatedStorageFileStream(Constants.TileCachePath + post.ID.ToString(CultureInfo.InvariantCulture) + ".jpg",
-                                                              FileMode.Open, CardboardBoxSession.Instance.IsolatedStorage))
-                        {
-                            BitmapImage img = new BitmapImage();
-                            img.SetSource(fs);
-                            post.ImageSource = img;
-                        }
-
+                        var post = Session.Instance.WhatsNewPosts[i];
+                        post.ImageSource = Session.Instance.Cache.GetTile(post);
                         ListBoxWhatsNew.Items.Add(post);
                     }
 
                 };
+        }
+
+        public void AttachWhatsNewHandlers()
+        {
+            
+        }
+
+        private void PostTemplateClick(object sender, RoutedEventArgs e)
+        {
+            Post p = ((FrameworkElement) sender).Tag as Post;
+            if (p == null) throw new Exception();
+
+            Session.Instance.SelectedPost = p;
+            NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
         }
     }
 }

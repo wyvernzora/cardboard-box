@@ -110,7 +110,7 @@ namespace CardboardBox
                     // Everything good, go to next page
 
                     // TODO download data
-                    CardboardBoxSession.Instance.InitializeAsync(
+                    Session.Instance.InitializeAsync(
                         () =>
                             {
                                 NavigationService.Navigate(new Uri("/HomePage.xaml", UriKind.Relative));

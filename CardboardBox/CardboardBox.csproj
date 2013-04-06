@@ -70,16 +70,20 @@
     <Compile Include="Barlox\BarloxAnimation.cs" />
     <Compile Include="Barlox\BarloxFrame.cs" />
     <Compile Include="Barlox\BarloxSequence.cs" />
-    <Compile Include="CardboardBoxSession.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageDownloadHelper.cs" />
+    <Compile Include="LocalCacheManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewPost.xaml.cs">
+      <DependentUpon>ViewPost.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -91,6 +95,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ViewPost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
