@@ -24,6 +24,7 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Windows.Media.Imaging;
 
@@ -49,8 +50,15 @@ namespace libDanbooru2
         public Boolean HasChildren { get; set; }
 
 
-        [DataMember(Name = "rating")]
-        public String Rating { get; set; }
+        [DataMember(Name = "rating")] 
+        public String RatingString { get; set; }
+
+        [IgnoreDataMember]
+        public Rating Rating
+        {
+            get { return RatingEx.Parse(RatingString); }
+            set { RatingString = value.ToString().Substring(0, 1).ToLower(); }
+        }
 
         [DataMember(Name = "status")]
         public String Status { get; set; }

@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace libDanbooru2.Core
+namespace libWyvernzora.Core
 {
     /// <summary>
     ///     Represents "Endianness" of a number value

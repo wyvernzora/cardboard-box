@@ -13,8 +13,8 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 using System.Windows.Shapes;
-using CardboardBox.Barlox;
 using Microsoft.Phone.Controls;
+using libWyvernzora.BarlogX.Animation;
 
 namespace CardboardBox
 {
@@ -33,6 +33,20 @@ namespace CardboardBox
             };
             animation.IsEnabled = true;
 
+            // Load Image
+            BitmapImage image = new BitmapImage(new Uri("http://konachan.com/image/441f4f6645338bebf2edd5e80050cb2d/Konachan.com%20-%20157558%20hatsune_miku%20sakura_miku%20vocaloid.jpg", UriKind.Absolute));
+            image.DownloadProgress += (@s, e) =>
+                {
+                    progressBar.Value = e.Progress;
+                    if (e.Progress == 100)
+                        VisualStateManager.GoToState(this, "Loaded", true);
+                };
+            image.ImageFailed += (@s, e) =>
+                {
+                    System.Diagnostics.Debugger.Break();
+                };
+            PostImage.Source = image;
+
             /*
            if (Session.Instance.SelectedPost.LargeImageSource == null)
             {
@@ -40,17 +54,20 @@ namespace CardboardBox
                 bw.DoWork += (@s, e) =>
                     {
                         Session.Instance.Cache.EnsureSampleCache(Session.Instance.SelectedPost);
+                        e.Result = Session.Instance.Cache.GetSampleStream(Session.Instance.SelectedPost);
                     };
                 bw.RunWorkerCompleted += (@s, e) =>
                     {
                         VisualStateManager.GoToState(this, "Loaded", true);
-                        Session.Instance.SelectedPost.LargeImageSource =
-                            Session.Instance.Cache.GetTile(Session.Instance.SelectedPost);
+                        
+                        BitmapImage img = new BitmapImage();
+                        img.SetSource((Stream)e.Result);
+                        Session.Instance.SelectedPost.LargeImageSource = img;
                         PostImage.Source = Session.Instance.SelectedPost.LargeImageSource;
                     };
                 bw.RunWorkerAsync();
             } 
-             * */
+            */
 
 
         }

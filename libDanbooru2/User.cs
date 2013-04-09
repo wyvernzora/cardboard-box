@@ -41,6 +41,16 @@ namespace libDanbooru2
         public Int32 Level { get; set; }
 
         [DataMember(Name = "created_at")]
-        public String CreatedAt { get; set; }
+        public String CreatedAtString { get; set; }
+
+        [IgnoreDataMember]
+        public DateTime CreatedAt
+        {
+            get
+            {
+                return
+                    (new DanbooruV1DateTimeParser()).Parse(CreatedAtString);
+            }
+        }
     }
 }

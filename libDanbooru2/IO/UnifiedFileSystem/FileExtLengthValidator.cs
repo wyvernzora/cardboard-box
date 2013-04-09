@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Barlox.WP7/BarloxSequence.cs
+// libWyvernzora/FileExtLengthValidator.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of Barlog X Game Engine.
+// This file is a part of libWyvernzora.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -25,59 +25,49 @@
 
 using System;
 
-namespace CardboardBox.Barlox
+namespace libWyvernzora.IO
 {
     /// <summary>
-    ///     A sequence of BarloxFrames.
-    ///     Also a state in BarloxAnimation FSM.
+    ///     Validates whether strings can be file extension based on their length.
     /// </summary>
-    /// <remarks>
-    ///     For a description of BarloxAnimation framework, see
-    ///     http://www.wyvernzora.com/2012/05/simple-application-of-finite-state.html
-    /// </remarks>
-    public class BarloxState
+    public class FileExtLengthValidator : IFileExtValidator
     {
+        private Int32 max;
+        private Int32 min;
+
         /// <summary>
         ///     Constructor.
         ///     Initializes a new instance.
         /// </summary>
-        /// <param name="frames">Frames in this BarloxState.</param>
-        /// <param name="transitions">Transitions from this BarloxState.</param>
-        public BarloxState(Int32[] frames, Transition[] transitions)
+        /// <param name="minLength">Minimum allowed length for a file extension, excluding preceeding dot.</param>
+        /// <param name="maxLength">Maximum allowed length for a file extension, excluding preceeding dot.</param>
+        public FileExtLengthValidator(Int32 minLength, Int32 maxLength)
         {
-            Frames = frames;
-            Transitions = transitions;
+            MinimumLength = minLength;
+            MaximumLength = maxLength;
         }
 
         /// <summary>
-        ///     Frames in this BarloxState.
+        ///     Minimum allowed length for a file extension, excluding preceeding dot.
         /// </summary>
-        public Int32[] Frames { get; private set; }
-
-        /// <summary>
-        ///     Transitions from this BarloxState.
-        /// </summary>
-        public Transition[] Transitions { get; private set; }
-
-        /// <summary>
-        ///     Transition from one state to another within BarloxAnimation FSM.
-        /// </summary>
-        public sealed class Transition : IComparable<Transition>
+        public Int32 MinimumLength
         {
-            /// <summary>
-            ///     ID of the next state.
-            /// </summary>
-            public Int32 NextStateID { get; set; }
+            get { return min - 1; }
+            set { min = value + 1; }
+        }
 
-            /// <summary>
-            ///     Weight of the transition.
-            /// </summary>
-            public Int32 Weight { get; set; }
+        /// <summary>
+        ///     Maximum allowed length for a file extension, excluding preceeding dot.
+        /// </summary>
+        public Int32 MaximumLength
+        {
+            get { return max - 1; }
+            set { max = value + 1; }
+        }
 
-            public int CompareTo(Transition other)
-            {
-                return Weight.CompareTo(other.Weight);
-            }
+        public bool IsValid(string currentExt, string compositeExt)
+        {
+            return (currentExt.Length >= min && currentExt.Length <= max);
         }
     }
 }

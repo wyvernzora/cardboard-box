@@ -27,7 +27,7 @@ using System;
 
 // ReSharper disable InconsistentNaming
 
-namespace libDanbooru2.Core
+namespace libWyvernzora.Core
 {
     /// <summary>
     ///     Utility class with frequently used bit operations.

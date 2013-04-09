@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora/Counter.cs
+// CardboardBox/ActionCommand.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of libWyvernzora.
+// This file is a part of CardboardBox.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -24,22 +24,33 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
+using System.Windows.Input;
 
-namespace libWyvernzora.Utilities
+namespace CardboardBox.Utilities
 {
     /// <summary>
-    ///     Counter.
+    ///     Silverlight ICommand wrapper for a delegate.
     /// </summary>
-    public class Counter
+    public class ActionCommand : ICommand
     {
-        public Int32 Value { get; set; }
-
-        /// <summary>
-        ///     Increments the counter.
-        /// </summary>
-        public void Count()
+        public ActionCommand(Action act)
         {
-            Value++;
+            Action = act;
+        }
+
+        public Action Action { get; set; }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            if (Action != null)
+                Action.Invoke();
         }
     }
 }

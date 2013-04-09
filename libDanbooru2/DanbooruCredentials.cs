@@ -27,7 +27,7 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using libDanbooru2.Core;
+using libWyvernzora.Core;
 
 namespace libDanbooru2
 {
@@ -36,8 +36,17 @@ namespace libDanbooru2
     /// </summary>
     public sealed class DanbooruCredentials
     {
-        private readonly String hash;
-        private readonly String uname;
+        private String hash;
+        private String uname;
+
+        /// <summary>
+        ///     Constructor.
+        ///     Initializes a new instance.
+        /// </summary>
+        public DanbooruCredentials()
+        {
+            
+        }
 
         /// <summary>
         ///     Constructor.
@@ -71,6 +80,17 @@ namespace libDanbooru2
         public String Hash
         {
             get { return hash; }
+        }
+  
+        /// <summary>
+        /// Creates a DanbooruCredentials instance from already hashed password.
+        /// </summary>
+        /// <param name="username">Username.</param>
+        /// <param name="phash">SHA1 hashed salted password.</param>
+        /// <returns></returns>
+        public static DanbooruCredentials FromCredentials(String username, String phash)
+        {
+            return new DanbooruCredentials {uname = username, hash = phash};
         }
     }
 }

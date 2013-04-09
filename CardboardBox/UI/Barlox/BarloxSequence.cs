@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora/ActionLock.cs
+// Barlox.WP7/BarloxSequence.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of libWyvernzora.
+// This file is a part of Barlog X Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -25,32 +25,59 @@
 
 using System;
 
-namespace libWyvernzora.Utilities
+namespace libWyvernzora.BarlogX.Animation
 {
     /// <summary>
-    ///     Action Lock, makes sure that Bbegin" and "end" methods are called in pairs.
-    ///     For example: Bitmap.LockBits() and Bitmap.UnlockBits().
+    ///     A sequence of BarloxFrames.
+    ///     Also a state in BarloxAnimation FSM.
     /// </summary>
-    public class ActionLock : IDisposable
+    /// <remarks>
+    ///     For a description of BarloxAnimation framework, see
+    ///     http://www.wyvernzora.com/2012/05/simple-application-of-finite-state.html
+    /// </remarks>
+    public class BarloxState
     {
-        private readonly Action end;
-
         /// <summary>
         ///     Constructor.
         ///     Initializes a new instance.
         /// </summary>
-        /// <param name="begin"></param>
-        /// <param name="end"></param>
-        public ActionLock(Action begin, Action end)
+        /// <param name="frames">Frames in this BarloxState.</param>
+        /// <param name="transitions">Transitions from this BarloxState.</param>
+        public BarloxState(Int32[] frames, Transition[] transitions)
         {
-            this.end = end;
-            begin();
+            Frames = frames;
+            Transitions = transitions;
         }
 
+        /// <summary>
+        ///     Frames in this BarloxState.
+        /// </summary>
+        public Int32[] Frames { get; private set; }
 
-        public void Dispose()
+        /// <summary>
+        ///     Transitions from this BarloxState.
+        /// </summary>
+        public Transition[] Transitions { get; private set; }
+
+        /// <summary>
+        ///     Transition from one state to another within BarloxAnimation FSM.
+        /// </summary>
+        public sealed class Transition : IComparable<Transition>
         {
-            end();
+            /// <summary>
+            ///     ID of the next state.
+            /// </summary>
+            public Int32 NextStateID { get; set; }
+
+            /// <summary>
+            ///     Weight of the transition.
+            /// </summary>
+            public Int32 Weight { get; set; }
+
+            public int CompareTo(Transition other)
+            {
+                return Weight.CompareTo(other.Weight);
+            }
         }
     }
 }

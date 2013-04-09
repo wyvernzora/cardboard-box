@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora/Counter.cs
+// libDanbooru2/Rating.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of libWyvernzora.
+// This file is a part of libDanbooru2.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -25,21 +25,27 @@
 
 using System;
 
-namespace libWyvernzora.Utilities
+namespace libDanbooru2
 {
     /// <summary>
-    ///     Counter.
+    ///     Represents post Rating.
     /// </summary>
-    public class Counter
+    public enum Rating
     {
-        public Int32 Value { get; set; }
+        Safe = 0,
+        Questionable = 1,
+        Explicit = 2
+    }
 
-        /// <summary>
-        ///     Increments the counter.
-        /// </summary>
-        public void Count()
+    public static class RatingEx
+    {
+        public static Rating Parse(String str)
         {
-            Value++;
+            str = str.ToLower();
+            if (str == "s" || str == "safe") return Rating.Safe;
+            if (str == "q" || str == "questionable") return Rating.Questionable;
+            if (str == "e" || str == "explicit") return Rating.Explicit;
+            throw new Exception();
         }
     }
 }

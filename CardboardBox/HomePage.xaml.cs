@@ -14,6 +14,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
 using libDanbooru2;
 
 namespace CardboardBox
@@ -25,40 +26,71 @@ namespace CardboardBox
             InitializeComponent();
 
             // Load Appropriate Banner
-            String bannerUrl = App.IsInDarkTheme() ? "/CardboardBox;component/Assets/panorama-background-dark.png" : "/CardboardBox;component/Assets/panorama-background-light.png";
+            String bannerUrl = App.IsInDarkTheme() ? "/Assets/banner-dark.png" : "/Assets/banner-light.png";
             BitmapImage bannerSrc = new BitmapImage(new Uri(bannerUrl, UriKind.Relative));
-            Panorama.Background = new ImageBrush() {ImageSource = bannerSrc};
+            Panorama.Title = bannerSrc;
 
+            // Initialize User Profile Page
+            UsernameTextBlock.Text = Session.Instance.User.Name;
+            UserLevelTextBlock.Text = Session.Instance.GetUserLevel(Session.Instance.User.Level).Name;
+            JoinDateTextBlock.Text = Session.Instance.User.CreatedAt.ToLongDateString();
+            UserIdTextBlock.Text = Session.Instance.User.ID.ToString(CultureInfo.InvariantCulture);
+
+            // Attach Event Handlers
+            AttachAppBarHandlers();
+            AttachWhatsNewHandlers();
 
             Loaded += (@s, e) =>
                 {
                     // Remove login screen from back stack
                     if (NavigationService.BackStack.Any())
                         NavigationService.RemoveBackEntry();
-
-                    // Add What's new Items
-                    for (int i = 0; i < 60; i++)
-                    {
-                        var post = Session.Instance.WhatsNewPosts[i];
-                        post.ImageSource = Session.Instance.Cache.GetTile(post);
-                        ListBoxWhatsNew.Items.Add(post);
-                    }
-
                 };
         }
 
-        public void AttachWhatsNewHandlers()
+        private void AttachWhatsNewHandlers()
         {
             
         }
 
-        private void PostTemplateClick(object sender, RoutedEventArgs e)
+        private void AttachAppBarHandlers()
         {
-            Post p = ((FrameworkElement) sender).Tag as Post;
-            if (p == null) throw new Exception();
+            // Attach App Bar Commands
+            ((ApplicationBarMenuItem) ApplicationBar.MenuItems[0]).Click += (@s, e) => Session.Instance.LogOut();
 
-            Session.Instance.SelectedPost = p;
-            NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
+            Panorama.SelectionChanged += (@s, e) =>
+                {
+                    switch (Panorama.SelectedIndex)
+                    {
+                        case 0:     // What's New
+                            
+                            ApplicationBar.IsVisible = true;
+                            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = true;
+                            ((ApplicationBarIconButton)ApplicationBar.Buttons[1]).IsEnabled = false;
+
+                            break;
+                        case 1:     // Favorite
+
+                            ApplicationBar.IsVisible = false;
+
+                            break;
+                        case 2:     // Subscriptions
+
+                            ApplicationBar.IsVisible = false;
+                            
+
+                            break;
+                        case 3:     // User Profile
+
+                            ApplicationBar.IsVisible = true;
+                            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false;
+                            ((ApplicationBarIconButton)ApplicationBar.Buttons[1]).IsEnabled = true;
+
+                            break;
+                    }
+                };
+
         }
+
     }
 }

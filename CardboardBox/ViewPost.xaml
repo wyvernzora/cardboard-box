@@ -50,7 +50,7 @@
                 			<RowDefinition Height="Auto"/>
                 		</Grid.RowDefinitions>
                 		<Image x:Name="LoadingAnimationImage" Margin="0"/>
-                		<ProgressBar x:Name="progressBar" Margin="0" Grid.Row="1" IsIndeterminate="True"/>
+                		<ProgressBar x:Name="progressBar" Margin="0" Grid.Row="1"/>
                 	</Grid>
                 
                     

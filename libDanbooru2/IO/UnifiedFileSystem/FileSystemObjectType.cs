@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora/Counter.cs
+// libWyvernzora/FileSystemObjectType.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -23,23 +23,14 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-using System;
-
-namespace libWyvernzora.Utilities
+namespace libWyvernzora.IO.UnifiedFileSystem
 {
     /// <summary>
-    ///     Counter.
+    ///     Represents type of FileSystemObject
     /// </summary>
-    public class Counter
+    public enum FileSystemObjectType
     {
-        public Int32 Value { get; set; }
-
-        /// <summary>
-        ///     Increments the counter.
-        /// </summary>
-        public void Count()
-        {
-            Value++;
-        }
+        File,
+        Directory
     }
 }

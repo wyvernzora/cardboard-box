@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora/Counter.cs
+// libWyvernzora/IFileSystemService.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -24,22 +24,49 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace libWyvernzora.Utilities
+namespace libWyvernzora.IO.UnifiedFileSystem
 {
     /// <summary>
-    ///     Counter.
+    ///     libWyvernzora File System Service Interface
     /// </summary>
-    public class Counter
+    public interface IFileSystem<T> : IDisposable where T : FileSystemObject
     {
-        public Int32 Value { get; set; }
+        /// <summary>
+        /// Gets a value indicating whether the IFileSystemService is readonly.
+        /// </summary>
+        Boolean IsReadOnly { get; }
 
         /// <summary>
-        ///     Increments the counter.
+        ///     List of all FileSystemObjects of File type.
         /// </summary>
-        public void Count()
-        {
-            Value++;
-        }
+        IEnumerable<T> Files { get; }
+
+        /// <summary>
+        ///     Root FileSystemObject of the File System.
+        /// </summary>
+        T Root { get; }
+
+        /// <summary>
+        ///     Tries to get the FileSystemObject with the specified path.
+        /// </summary>
+        /// <param name="path">Path of the FileSystemObject.</param>
+        /// <returns>A FileSystemObject if found; null otherwise.</returns>
+        T GetFileSystemObject(String path);
+
+        /// <summary>
+        /// Tries to open the FileSystemObject as a stream.
+        /// </summary>
+        /// <param name="obj">FileSystemObject to open.</param>
+        /// <param name="mode">FileMode to open FileSystemObject with.</param>
+        /// <returns>StreamEx if successful; null otherwise.</returns>
+        StreamEx OpenFileSystemObject(T obj, FileAccess mode);
+        
+        /// <summary>
+        ///     Closes the File System.
+        /// </summary>
+        void Close();
     }
 }

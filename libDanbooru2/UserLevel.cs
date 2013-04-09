@@ -23,20 +23,48 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+using System;
+
 namespace libDanbooru2
 {
     /// <summary>
-    ///     Represents account access level.
+    ///     Represents user level and permissions.
     /// </summary>
-    public enum UserLevel
+    public sealed class UserLevel
     {
-        Member = 20,
-        Gold = 30,
-        Platinum = 31,
-        Builder = 32,
-        Contributor = 33,
-        Janitor = 35,
-        Moderator = 40,
-        Admin = 50
+        /// <summary>
+        ///     Constructor.
+        ///     Initializes a new instance.
+        /// </summary>
+        /// <param name="level">
+        ///     <see cref="Level" />
+        /// </param>
+        /// <param name="name">
+        ///     <see cref="Name" />
+        /// </param>
+        /// <param name="tagLimit">
+        ///     <see cref="TagLimit" />
+        /// </param>
+        public UserLevel(Int32 level, String name, Int32 tagLimit)
+        {
+            Level = level;
+            Name = name;
+            TagLimit = tagLimit;
+        }
+
+        /// <summary>
+        ///     Gets the numeric representation of the level.
+        /// </summary>
+        public Int32 Level { get; private set; }
+
+        /// <summary>
+        ///     Gets the human readable description of the level.
+        /// </summary>
+        public String Name { get; private set; }
+
+        /// <summary>
+        ///     Gets the maximum number of tags this level permits.
+        /// </summary>
+        public Int32 TagLimit { get; private set; }
     }
 }

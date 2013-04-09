@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora/Counter.cs
+// Barlox.WP7/BarloxFrame.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of libWyvernzora.
+// This file is a part of Barlog X Game Engine.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -24,22 +24,23 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
+using System.Windows.Media.Imaging;
 
-namespace libWyvernzora.Utilities
+namespace libWyvernzora.BarlogX.Animation
 {
     /// <summary>
-    ///     Counter.
+    ///     Barlox Animation Frame.
     /// </summary>
-    public class Counter
+    public sealed class BarloxFrame
     {
-        public Int32 Value { get; set; }
+        /// <summary>
+        ///     Reference ID of the frame.
+        /// </summary>
+        public Int32 ID { get; set; }
 
         /// <summary>
-        ///     Increments the counter.
+        ///     Bitmap Source of the frame.
         /// </summary>
-        public void Count()
-        {
-            Value++;
-        }
+        public BitmapSource Source { get; set; }
     }
 }

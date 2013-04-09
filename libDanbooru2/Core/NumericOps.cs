@@ -26,7 +26,7 @@
 using System;
 using System.Linq;
 
-namespace libDanbooru2.Core
+namespace libWyvernzora.Core
 {
     public static class NumericOps
     {

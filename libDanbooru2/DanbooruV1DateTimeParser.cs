@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora/Counter.cs
+// CardboardBox/DanbooruV1DateTimeParser.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of libWyvernzora.
+// This file is a part of CardboardBox.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -24,22 +24,38 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
+using System.Text.RegularExpressions;
 
-namespace libWyvernzora.Utilities
+namespace libDanbooru2
 {
     /// <summary>
-    ///     Counter.
+    ///     DateTime parser for Danbooru API version 1.
     /// </summary>
-    public class Counter
+    public class DanbooruV1DateTimeParser : IDateTimeParser
     {
-        public Int32 Value { get; set; }
+        private const String REGEX =
+            "(?<yr>[0-9]{4})-(?<mo>[0-9]{2})-(?<dy>[0-9]{2}) (?<hr>[0-9]{2}):(?<min>[0-9]{2})(|:(?<sec>[0-9]{2}))";
 
-        /// <summary>
-        ///     Increments the counter.
-        /// </summary>
-        public void Count()
+        public DateTime Parse(string str)
         {
-            Value++;
+            Match m = Regex.Match(str, REGEX);
+            if (!m.Success) throw new Exception();
+
+            Int32 yr = Int32.Parse(m.Result("${yr}"));
+            Int32 mo = Int32.Parse(m.Result("${mo}"));
+            Int32 dy = Int32.Parse(m.Result("${dy}"));
+            Int32 hr = Int32.Parse(m.Result("${hr}"));
+            Int32 min = Int32.Parse(m.Result("${min}"));
+
+            String strsec = m.Result("${sec}");
+            Int32 sec = String.IsNullOrEmpty(strsec) ? 0 : Int32.Parse(m.Result("${sec}"));
+
+            return new DateTime(yr, mo, dy, hr, min, sec);
+        }
+
+        public string ToString(DateTime dt)
+        {
+            throw new NotSupportedException();
         }
     }
 }

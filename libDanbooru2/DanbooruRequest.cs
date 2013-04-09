@@ -131,7 +131,7 @@ namespace libDanbooru2
                 queryResult = null;
                 queryStatus = (Int32)HttpStatusCode.Forbidden;
             }
-            catch (Exception)
+            catch (Exception x)
             {
                 queryResult = null;
                 queryStatus = (Int32)HttpStatusCode.ExpectationFailed;

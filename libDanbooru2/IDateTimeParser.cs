@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Barlox.WP7/BarloxFrame.cs
+// Korobka/IDateTimeParser.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of Barlog X Game Engine.
+// This file is a part of Korobka.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -24,23 +24,23 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
-using System.Windows.Media.Imaging;
 
-namespace CardboardBox.Barlox
+namespace libDanbooru2
 {
     /// <summary>
-    ///     Barlox Animation Frame.
+    ///     Exposes methods to parse string into DateTime objects and
+    ///     to convert DateTime into string.
     /// </summary>
-    public sealed class BarloxFrame
+    public interface IDateTimeParser
     {
         /// <summary>
-        ///     Reference ID of the frame.
+        ///     When implemented, parses string into DateTime object.
         /// </summary>
-        public Int32 ID { get; set; }
+        DateTime Parse(String str);
 
         /// <summary>
-        ///     Bitmap Source of the frame.
+        ///     When implemented, converts DayTime into string.
         /// </summary>
-        public BitmapSource Source { get; set; }
+        String ToString(DateTime dt);
     }
 }

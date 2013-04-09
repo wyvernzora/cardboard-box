@@ -15,84 +15,31 @@
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="False">
 	<phone:PhoneApplicationPage.Resources>
-
-
-        <Style x:Key="TileButtonTemplate" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PhoneForegroundBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-            <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
-            <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilySemiBold}"/>
-            <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
-            <Setter Property="Padding" Value="10,3,10,5"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="ButtonBackground" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="0">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Disabled"/>
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver"/>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="ButtonBackground">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Thickness>3</Thickness>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentControl x:Name="ContentContainer" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <DataTemplate x:Key="MediumPostTileTemplate">
-            <Button Margin="6" BorderThickness="1" BorderBrush="#FF393939" Height="90" 
-			Width="90" Style="{StaticResource TileButtonTemplate}" Click="PostTemplateClick"
-			Tag="{Binding}">
-                <Image Stretch="UniformToFill" Source="{Binding ImageSource}"/>
-            </Button>
-        </DataTemplate>
-
-        <ItemsPanelTemplate x:Key="WhatsNewListBoxPanelTemplate">
-			<toolkit:WrapPanel/>
-		</ItemsPanelTemplate>
+		
 	</phone:PhoneApplicationPage.Resources>
 
 	<phone:PhoneApplicationPage.ApplicationBar>
-		<shell:ApplicationBar IsVisible="true" IsMenuEnabled="True" Mode="Minimized"
-			Opacity="0.65">
+		<shell:ApplicationBar IsVisible="true" IsMenuEnabled="True" Mode="Default" Opacity="0.65">
+			<shell:ApplicationBarIconButton x:Name="AppBarSettingsButton" IconUri="/Assets/SDK/feature.settings.png" Text="Settings" />
+			<shell:ApplicationBarIconButton x:Name="AppBarRefreshButton" IconUri="/Assets/SDK/refresh.png" Text="Refresh" />
 			
+			<shell:ApplicationBar.MenuItems>
+				<shell:ApplicationBarMenuItem x:Name="AppBarLogout" Text="logout" />
+			</shell:ApplicationBar.MenuItems>
 		</shell:ApplicationBar>	
 	</phone:PhoneApplicationPage.ApplicationBar>
 
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
-        <controls:Panorama x:Name="Panorama" Title="cardboard box">
+        <controls:Panorama x:Name="Panorama" Title="">
+        	<controls:Panorama.TitleTemplate>
+        		<DataTemplate>
+        			<Image x:Name="HeaderImage" Width="512" Height="158" Source="{Binding}" Stretch="Uniform" Margin="0,20,0,0"/>		
+				</DataTemplate>	
+        	</controls:Panorama.TitleTemplate>
 
             <!--Panorama item one-->
-            <controls:PanoramaItem x:Name="WhatsNewPanoramaItem" Header="what's new">
-                <Grid>
-                	<ListBox x:Name="ListBoxWhatsNew" Margin="0" ItemsPanel="{StaticResource WhatsNewListBoxPanelTemplate}" ItemTemplate="{StaticResource MediumPostTileTemplate}" Background="{x:Null}" >
-                		<ListBox.OpacityMask>
-                			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                				<GradientStop Color="#647A7A7A" Offset="0"/>
-                				<GradientStop Color="Black" Offset="0.504"/>
-                				<GradientStop Color="Black" Offset="0.04"/>
-                			</LinearGradientBrush>
-                		</ListBox.OpacityMask>
-                	</ListBox>
-                	            
-				</Grid>
-            </controls:PanoramaItem>
+            <controls:PanoramaItem x:Name="WhatsNewPanoramaItem" Header="what's new"/>
 
             <!--Panorama item three-->
             <controls:PanoramaItem Header="favorites" >
@@ -102,6 +49,25 @@
             <!--Panorama item four-->
             <controls:PanoramaItem Header="subscription">
                 <Grid/>
+            </controls:PanoramaItem>
+            <controls:PanoramaItem x:Name="UserProfilePanoramaItem" Header="user profile">
+            	<Grid>
+            		<ScrollViewer Margin="0" 
+						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+						ScrollViewer.VerticalScrollBarVisibility="Auto">
+            			<StackPanel>
+            				<TextBlock Margin="16,10,16,0" TextWrapping="Wrap" Text="username" Foreground="{StaticResource PhoneDisabledBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            				<TextBlock x:Name="UsernameTextBlock" Margin="16,0" TextWrapping="Wrap" Text="CardboardBoxTest" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeLarge}"/>
+            				<TextBlock Margin="16,10,0,0" TextWrapping="Wrap" Text="user level" Foreground="{StaticResource PhoneDisabledBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            				<TextBlock x:Name="UserLevelTextBlock" Margin="16,0,0,0" TextWrapping="Wrap" Text="Anonymous" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeLarge}"/>
+            				<TextBlock Margin="16,10,0,0" TextWrapping="Wrap" Foreground="{StaticResource PhoneDisabledBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}" Text="join date"/>
+            				<TextBlock x:Name="JoinDateTextBlock" Margin="16,0,0,0" TextWrapping="Wrap" Text="2012-12-21" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeLarge}"/>
+            				<TextBlock Margin="16,10,0,0" TextWrapping="Wrap" Foreground="{StaticResource PhoneDisabledBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}" Text="user id"/>
+            				<TextBlock x:Name="UserIdTextBlock" Margin="16,0,0,0" TextWrapping="Wrap" Text="1234567" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeLarge}"/>
+							
+            			</StackPanel>
+            		</ScrollViewer>
+            	</Grid>
             </controls:PanoramaItem>
         </controls:Panorama>
     </Grid>

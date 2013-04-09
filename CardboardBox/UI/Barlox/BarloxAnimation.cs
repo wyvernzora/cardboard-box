@@ -30,7 +30,7 @@
 //     - BAX script parser/compiler
 //     - BAX solution loader
 //     - BAX script debugger
-//     - State queue
+//     - Advanced State Queue
 //     - Dynamic transition weight
 //     - Dynamic keyframe generation
 //     - Keyframe cross-reference
@@ -41,9 +41,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using libDanbooru2.IO;
+using libWyvernzora.IO;
 
-namespace CardboardBox.Barlox
+namespace libWyvernzora.BarlogX.Animation
 {
     /// <summary>
     ///     BarloxAnimation Finite State Machine.
@@ -56,10 +56,10 @@ namespace CardboardBox.Barlox
 
         private readonly BarloxFrame[] frames;
 
-        private readonly ExStream raw;
+        private readonly StreamEx raw;
         private readonly BarloxState[] states;
-        private Int32 cframe;
         private Int32 cstate;
+        private Int32 cframe;
         private Int32 fps;
 
 
@@ -74,39 +74,39 @@ namespace CardboardBox.Barlox
 
         public BarloxAnimation(Stream data) : this()
         {
-            raw = new ExStream(data);
+            raw = new StreamEx(data);
 
             // Verify Signature
-            UInt64 magicNumber = raw.ReadULong();
+            UInt64 magicNumber = raw.ReadUInt64();
             if (magicNumber != 24848203858985282)
                 throw new Exception("BarloxAnimation.ctor() : Invalid magic number");
 
             // Load Metadata
             raw.Position = 0x20;
-            Int32 imgDataAddress = raw.ReadInt();
-            Width = raw.ReadInt();
-            Height = raw.ReadInt();
-            FPS = raw.ReadInt();
+            Int32 imgDataAddress = raw.ReadInt32();
+            Width = raw.ReadInt32();
+            Height = raw.ReadInt32();
+            FPS = raw.ReadInt32();
 
             // Load Frames
-            Int32 framec = raw.ReadInt();
+            Int32 framec = raw.ReadInt32();
             Int64 frameIndexAddress = raw.Position;
 
             frames = new BarloxFrame[framec];
             for (int i = 0; i < framec; i++)
             {
                 raw.Position = frameIndexAddress + 0x10 * i; // Advance to specific frame index
-                Int32 typeId = raw.ReadInt();
+                Int32 typeId = raw.ReadInt32();
                 switch (typeId)
                 {
                     case 0xD0:
                         {
-                            Int32 address = raw.ReadInt() + imgDataAddress;
-                            Int32 length = raw.ReadInt();
-                            raw.ReadInt(); // Alignment
+                            Int32 address = raw.ReadInt32() + imgDataAddress;
+                            Int32 length = raw.ReadInt32();
+                            raw.ReadInt32(); // Alignment
 
                             BitmapImage image = new BitmapImage();
-                            image.SetSource(new ExPartStream(raw, address, length));
+                            image.SetSource(new PartialStreamEx(raw, address, length));
 
                             frames[i] = new BarloxFrame {Source = image};
                         }
@@ -121,7 +121,7 @@ namespace CardboardBox.Barlox
 
             // Load States
             raw.Position = frameIndexAddress + framec * 0x10;
-            Int32 seqc = raw.ReadInt();
+            Int32 seqc = raw.ReadInt32();
             states = new BarloxState[seqc];
 
             for (int i = 0; i < seqc; i++)
@@ -129,15 +129,15 @@ namespace CardboardBox.Barlox
                 List<Int32> sframes = new List<int>();
                 List<BarloxState.Transition> strans = new List<BarloxState.Transition>();
 
-                Int32 sframec = raw.ReadInt();
+                Int32 sframec = raw.ReadInt32();
                 for (int s = 0; s < sframec; s++)
-                    sframes.Add(raw.ReadInt());
+                    sframes.Add(raw.ReadInt32());
 
-                Int32 stransc = raw.ReadInt();
+                Int32 stransc = raw.ReadInt32();
                 for (int t = 0; t < stransc; t++)
                 {
-                    Int32 weight = raw.ReadInt();
-                    Int32 tgt = raw.ReadInt();
+                    Int32 weight = raw.ReadInt32();
+                    Int32 tgt = raw.ReadInt32();
                     strans.Add(new BarloxState.Transition {NextStateID = tgt, Weight = weight});
                 }
 
@@ -217,6 +217,23 @@ namespace CardboardBox.Barlox
         public BarloxFrame CurrentFrame
         {
             get { return frames[states[cstate].Frames[cframe]]; }
+        }
+
+        /// <summary>
+        /// Gets the ID of the current animation state.
+        /// Unvalidated, use with care!
+        /// </summary>
+        public int CurrentStateID
+        {
+            get { return cstate; }
+            set
+            {
+                if (cstate != value && cstate >= 0 && cstate < states.Length)
+                {
+                    cstate = value;
+                    cframe = 0;
+                }
+            }
         }
 
         /// <summary>
