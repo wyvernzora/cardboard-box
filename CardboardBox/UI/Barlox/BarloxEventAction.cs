@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora.BarlogX/BarloxFrame.cs
+// libWyvernzora.BarlogX/BarloxEventAction.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -24,38 +24,36 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
-using System.Windows.Media.Imaging;
 
 namespace libWyvernzora.BarlogX.Animation
 {
     /// <summary>
-    ///     Barlox Animation Frame.
+    ///     Action performed when an BarloxEvent occurs.
     /// </summary>
-    public sealed class BarloxFrame
+    public class BarloxEventAction
     {
         /// <summary>
-        ///     Gets the frame type.
+        ///     Gets or sets an array of conditions.
+        ///     The action is performed only when the current animation state
+        ///     exists in the condition array.
         /// </summary>
-        public BarloxFrameType Type { get; set; }
+        public Int32[] Condition { get; set; }
 
         /// <summary>
-        ///     Bitmap Source of the frame.
+        ///     Gets or sets a value indicating whether state changes
+        ///     should be queued or switched.
+        ///     If true, state changes will be enqueued and applied after
+        ///     the current state finished. If false, state changes will be
+        ///     applied immideately.
         /// </summary>
-        public BitmapSource Source { get; set; }
+        public BarloxEventActionType Type { get; set; }
 
         /// <summary>
-        ///     Gets the ID of the frame this BarloxFrame points to.
+        ///     Gets or sets an array of parameters.
+        ///     If more than one parameter is specified, the whole array
+        ///     will be enqueued. Only the first element of the array is applied
+        ///     immideately and all following elements are ignored.
         /// </summary>
-        public Int32 ReferenceID { get; set; }
-
-        /// <summary>
-        ///     Gets the X coordinate of the reference box.
-        /// </summary>
-        public Int32 X { get; set; }
-
-        /// <summary>
-        ///     Gets the Y coordinate of the reference box.
-        /// </summary>
-        public Int32 Y { get; set; }
+        public Int32[] Parameters { get; set; }
     }
 }

@@ -87,7 +87,7 @@ namespace libWyvernzora.IO
         /// </summary>
         public override bool CanRead
         {
-            get { return (stream.CanRead && access.HasFlag(FileAccess.Read)); }
+            get { return (stream.CanRead && (access & FileAccess.Read) != 0); }
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace libWyvernzora.IO
         /// </summary>
         public override bool CanWrite
         {
-            get { return (stream.CanWrite && access.HasFlag(FileAccess.Write)); }
+            get { return (stream.CanWrite && (access & FileAccess.Write) != 0); }
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace libWyvernzora.IO
         /// </param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (!access.HasFlag(FileAccess.Write))
+            if ((access & FileAccess.Write) == 0)
                 throw new InvalidOperationException("Cannot write to this stream!");
             if (offset < 0) throw new ArgumentOutOfRangeException("offset");
             if (count < 0) throw new ArgumentOutOfRangeException("count");

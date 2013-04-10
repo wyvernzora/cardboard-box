@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora.BarlogX/BarloxFrame.cs
+// libWyvernzora.BarlogX/BarloxEvent.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -24,38 +24,22 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
-using System.Windows.Media.Imaging;
 
 namespace libWyvernzora.BarlogX.Animation
 {
     /// <summary>
-    ///     Barlox Animation Frame.
+    ///     BarloxAnimation
     /// </summary>
-    public sealed class BarloxFrame
+    public class BarloxEvent
     {
         /// <summary>
-        ///     Gets the frame type.
+        ///     Gets or sets the event name.
         /// </summary>
-        public BarloxFrameType Type { get; set; }
+        public String Name { get; set; }
 
         /// <summary>
-        ///     Bitmap Source of the frame.
+        ///     Gets or sets an array of actions associated with the event
         /// </summary>
-        public BitmapSource Source { get; set; }
-
-        /// <summary>
-        ///     Gets the ID of the frame this BarloxFrame points to.
-        /// </summary>
-        public Int32 ReferenceID { get; set; }
-
-        /// <summary>
-        ///     Gets the X coordinate of the reference box.
-        /// </summary>
-        public Int32 X { get; set; }
-
-        /// <summary>
-        ///     Gets the Y coordinate of the reference box.
-        /// </summary>
-        public Int32 Y { get; set; }
+        public BarloxEventAction[] Actions { get; set; }
     }
 }

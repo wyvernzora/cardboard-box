@@ -52,9 +52,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Core\ArrayOps.cs" />
     <Compile Include="Core\BitOps.cs" />
     <Compile Include="Core\DirectIntConv.cs" />
     <Compile Include="Core\NumericOps.cs" />
+    <Compile Include="Core\VInt.cs" />
     <Compile Include="DanbooruCredentials.cs" />
     <Compile Include="DanbooruRequest.cs" />
     <Compile Include="DanbooruV1DateTimeParser.cs" />

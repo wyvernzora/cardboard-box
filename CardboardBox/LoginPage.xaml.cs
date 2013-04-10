@@ -55,7 +55,7 @@ namespace CardboardBox
 
             // Load Barlox Animation
             StreamResourceInfo animData =
-                Application.GetResourceStream(new Uri("Assets/chibi-small.bxa", UriKind.Relative));
+                Application.GetResourceStream(new Uri("Assets/chibi-small.ibxa", UriKind.Relative));
             animation = new BarloxAnimation(animData.Stream);
             animation.FrameChanged += (@s, e) => { ImgChibi.Source = e.NewFrame.Source; };
             animation.IsEnabled = true;
@@ -88,13 +88,7 @@ namespace CardboardBox
 
         private void AttachEventHandlers()
         {
-            ImgChibi.Tap += (@s, e) =>
-                {
-                    if (animation.CurrentStateID == 0 || animation.CurrentStateID == 3)
-                        animation.CurrentStateID = 1;
-                    else if (animation.CurrentStateID >= 5 && animation.CurrentStateID <= 7)
-                        animation.CurrentStateID = 4;
-                };
+            ImgChibi.Tap += (@s, e) => animation.TriggerEvent("poke");
 
             // No Account? Sign Up!
             ButtonSignup.Click += (@s, e) =>

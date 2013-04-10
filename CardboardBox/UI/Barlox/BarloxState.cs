@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Barlox.WP7/BarloxSequence.cs
+// libWyvernzora.BarlogX/BarloxSequence.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of Barlog X Game Engine.
+// This file is a part of libWyvernzora.BarlogX.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -37,6 +37,17 @@ namespace libWyvernzora.BarlogX.Animation
     /// </remarks>
     public class BarloxState
     {
+
+        /// <summary>
+        ///     Constructor.
+        ///     Initializes a new instance.
+        /// </summary>
+        internal BarloxState()
+        {
+            
+        }
+
+
         /// <summary>
         ///     Constructor.
         ///     Initializes a new instance.
@@ -52,17 +63,17 @@ namespace libWyvernzora.BarlogX.Animation
         /// <summary>
         ///     Frames in this BarloxState.
         /// </summary>
-        public Int32[] Frames { get; private set; }
+        public Int32[] Frames { get; internal set; }
 
         /// <summary>
         ///     Transitions from this BarloxState.
         /// </summary>
-        public Transition[] Transitions { get; private set; }
+        public Transition[] Transitions { get; internal set; }
 
         /// <summary>
         ///     Transition from one state to another within BarloxAnimation FSM.
         /// </summary>
-        public sealed class Transition : IComparable<Transition>
+        public class Transition : IComparable<Transition>
         {
             /// <summary>
             ///     ID of the next state.

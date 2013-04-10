@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// libWyvernzora.BarlogX/BarloxFrame.cs
+// libWyvernzora.BarlogX/BarloxEnums.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -23,39 +23,37 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-using System;
-using System.Windows.Media.Imaging;
-
 namespace libWyvernzora.BarlogX.Animation
 {
     /// <summary>
-    ///     Barlox Animation Frame.
+    ///     Represents type of BarloxFrame.
     /// </summary>
-    public sealed class BarloxFrame
+    public enum BarloxFrameType
     {
         /// <summary>
-        ///     Gets the frame type.
+        ///     BarloxFrame points to an independent image.
         /// </summary>
-        public BarloxFrameType Type { get; set; }
+        Image,
 
         /// <summary>
-        ///     Bitmap Source of the frame.
+        ///     BarloxFrame references part of another image.
         /// </summary>
-        public BitmapSource Source { get; set; }
+        Reference
+    }
+
+    /// <summary>
+    ///     Represents type of BarloxEventAction.
+    /// </summary>
+    public enum BarloxEventActionType
+    {
+        /// <summary>
+        ///     Animation state is switched to target immideately.
+        /// </summary>
+        Switch,
 
         /// <summary>
-        ///     Gets the ID of the frame this BarloxFrame points to.
+        ///     Animation state is switched to target upon completion of current state.
         /// </summary>
-        public Int32 ReferenceID { get; set; }
-
-        /// <summary>
-        ///     Gets the X coordinate of the reference box.
-        /// </summary>
-        public Int32 X { get; set; }
-
-        /// <summary>
-        ///     Gets the Y coordinate of the reference box.
-        /// </summary>
-        public Int32 Y { get; set; }
+        Queue
     }
 }
