@@ -92,5 +92,18 @@ namespace libWyvernzora.Core
             a = b;
             b = tmp;
         }
+
+        /// <summary>
+        /// Returns the smallest integer that is divisible by <paramref name="alignment"/>
+        /// and is greater than <paramref name="a"/>.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="alignment"></param>
+        /// <returns></returns>
+        public static Int32 Align(this Int32 a, Int32 alignment)
+        {
+            if (alignment <= 1) return a;
+            return ((a + alignment - 1) / alignment) * alignment;
+        }
     }
 }
