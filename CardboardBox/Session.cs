@@ -30,6 +30,7 @@ using System.Diagnostics;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using CardboardBox.Utilities;
@@ -67,6 +68,8 @@ namespace CardboardBox
         public const String UserIndexUrl = "/user/index.json?";
 
         public const String PostIndexUrl = "/post/index.json?";
+
+        public const String PreviewDir = "/ssd/data/preview/";
 
 
 // ReSharper restore InconsistentNaming
@@ -132,6 +135,11 @@ namespace CardboardBox
         public User User { get; private set; }
 
         /// <summary>
+        /// Gets the post viewer template generator for the session.
+        /// </summary>
+        public PostViewerTemplate PostViewerTemplate { get; private set; }
+
+        /// <summary>
         /// Gets or sets the cookie for this session.
         /// </summary>
         public CookieContainer Cookie { get; set; }
@@ -141,8 +149,12 @@ namespace CardboardBox
         /// <summary>
         /// Gets or sets a list of newest posts.
         /// </summary>
-        public List<Post> NewPosts { get; set; } 
+        public List<Post> NewPosts { get; set; }
 
+        /// <summary>
+        /// Gets or sets currently selected post.
+        /// </summary>
+        public Post Selected { get; set; }
 
         #endregion
 
@@ -218,20 +230,6 @@ namespace CardboardBox
 
         #endregion
 
-        #region Commands
-
-        private ICommand logoutCommand;
-
-        /// <summary>
-        /// Gets the logout command for the session.
-        /// </summary>
-        public ICommand LogoutCommand
-        {
-            get { return logoutCommand ?? (logoutCommand = new ActionCommand(Instance.LogOut)); }
-        }
-
-        #endregion
-
         #region Preference Settings Notification
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -270,6 +268,23 @@ namespace CardboardBox
                     if (User == null)
                         Debugger.Break(); // Since user is logged in, the profile MUST be there.
 #endif
+
+                    // Load Template generator
+                    PostViewerTemplate = new PostViewerTemplate("Assets/template.html");
+
+                    // Load first 100 images
+                    var newRequest = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
+                    newRequest.AddArgument("limit", 60);
+                    if (MaxRating == Rating.Safe) newRequest.AddArgument("tag", "rating:s");
+                    else if (maxRating == Rating.Questionable) newRequest.AddArgument("tag", "-rating:e");
+                    newRequest.ExecuteRequest(Cookie);
+                    while (newRequest.Status == -1) ;
+                    Post[] newPosts = newRequest.Result;
+                    NewPosts = new List<Post>(newPosts);
+                    foreach (var p in NewPosts)
+                        p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
+
+
                 };
             bw.RunWorkerCompleted += (@s, e) => callback();
             bw.RunWorkerAsync();

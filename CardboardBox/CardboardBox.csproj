@@ -68,6 +68,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Nerwork\FileDownloader.cs" />
+    <Compile Include="PostViewerTemplate.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
@@ -111,6 +112,7 @@
     <Content Include="Assets\banner-light-alt.png" />
     <Content Include="Assets\SDK\feature.settings.png" />
     <Content Include="Assets\SDK\refresh.png" />
+    <Content Include="Assets\template.html" />
     <Content Include="SplashScreenImage.jpg" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />

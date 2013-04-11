@@ -22,10 +22,11 @@
 		<shell:ApplicationBar IsVisible="true" IsMenuEnabled="True" Mode="Default" Opacity="0.65">
 			
 			<shell:ApplicationBar.MenuItems>
+				<shell:ApplicationBarMenuItem x:Name="AppBarSettings" Text="settings" />
 				<shell:ApplicationBarMenuItem x:Name="AppBarLogout" Text="logout" />
 			</shell:ApplicationBar.MenuItems>
+					
 			
-			<shell:ApplicationBarIconButton x:Name="AppBarSettingsButton" IconUri="/Assets/SDK/feature.settings.png" Text="settings" />
 
 		</shell:ApplicationBar>	
 	</phone:PhoneApplicationPage.ApplicationBar>
@@ -42,7 +43,7 @@
             <!--Panorama item one-->
             <controls:PanoramaItem x:Name="WhatsNewPanoramaItem" Header="what's new">
             	<Grid Margin="0">
-            		<ListBox Margin="0">
+            		<ListBox x:Name="NewPostList" Margin="0">
             			<ListBox.ItemsPanel>
             				<ItemsPanelTemplate>
             					<toolkit:WrapPanel Orientation="Horizontal" />
@@ -51,7 +52,10 @@
 
 						<ListBox.ItemTemplate>
 							<DataTemplate>
-								<Image Width="120" Height="120" Margin="10,10,10,10" Source="{Binding Path=PreviewUrl}" />
+								<Border Width="120" Height="120" Margin="10,10,10,10" 
+								BorderThickness="1" BorderBrush="Gray" Background="#80000000">
+									<Image Source="{Binding Path=PreviewUrl}" Stretch="UniformToFill" />
+								</Border>
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 

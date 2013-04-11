@@ -17,6 +17,7 @@ using CardboardBox.Nerwork;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using libDanbooru2;
+using libWyvernzora.Utilities;
 
 namespace CardboardBox
 {
@@ -50,28 +51,36 @@ namespace CardboardBox
             AttachAppBarHandlers();
             AttachWhatsNewHandlers();
 
+            // Load Initial Posts
+            // Add New Post Entries
+            foreach (var p in Session.Instance.NewPosts)
+                NewPostList.Items.Add(p);
+
             Loaded += (@s, e) =>
                 {
                     // Remove login screen from back stack
                     if (NavigationService.BackStack.Any())
                         NavigationService.RemoveBackEntry();
+
+
                 };
         }
 
         private void AttachWhatsNewHandlers()
         {
-            
+            NewPostList.Tap += (@s, e) =>
+                {
+                    Post p = NewPostList.SelectedItem as Post;
+                    if (p == null) return;
+                    Session.Instance.Selected = p;
+                    NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
+                };
         }
 
         private void AttachAppBarHandlers()
         {
             // Attach App Bar Commands
-            ((ApplicationBarMenuItem) ApplicationBar.MenuItems[0]).Click += (@s, e) => Session.Instance.LogOut();
-
-            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).Click += (@s, e) =>
-                {
-                    NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
-                };
+            ((ApplicationBarMenuItem) ApplicationBar.MenuItems[1]).Click += (@s, e) => Session.Instance.LogOut();
             
         }
 
