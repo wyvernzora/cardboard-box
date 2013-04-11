@@ -20,58 +20,36 @@ namespace CardboardBox
 {
     public partial class ViewPost : PhoneApplicationPage
     {
+        private const Int32 PanMargin = 100;
+
         public ViewPost()
         {
             InitializeComponent();
 
             // Load Barlox Animation
-            StreamResourceInfo animData = Application.GetResourceStream(new Uri("Assets/chibi-small.bxa", UriKind.Relative));
+            StreamResourceInfo animData =
+                Application.GetResourceStream(new Uri("Assets/chibi-small.ibxa", UriKind.Relative));
             BarloxAnimation animation = new BarloxAnimation(animData.Stream);
             animation.FrameChanged += (@s, e) =>
-            {
-                LoadingAnimationImage.Source = e.NewFrame.Source;
-            };
+                {
+                    LoadingAnimationImage.Source = e.NewFrame.Source;
+                };
             animation.IsEnabled = true;
 
+            // Get Browser Size
+            Int32 browserHeight = (Int32) PostBrowser.ActualHeight;
+            Int32 browserWidth = (Int32) PostBrowser.ActualWidth;
+
             // Load Image
-            BitmapImage image = new BitmapImage(new Uri("http://konachan.com/image/441f4f6645338bebf2edd5e80050cb2d/Konachan.com%20-%20157558%20hatsune_miku%20sakura_miku%20vocaloid.jpg", UriKind.Absolute));
-            image.DownloadProgress += (@s, e) =>
+            PostBrowser.NavigateToString(
+                "<!DOCTYPE html><html style=\"overflow:hidden\"><body bgcolor=\"#000000\" style=\"width:100%; height=100%\"><meta name=\"viewport\" content=\"width=320, height=360, initial-scale=1\"/>" +
+                "<div style=\"vertical-align:middle\"><center><img  style=\"width:100%; height=100%\" src=\"http://danbooru.donmai.us/data/9c348a0a483b4255a69101a53a5c9f5c.jpg\"/></center></div></body></html>"
+                );
+            //PostBrowser.Navigate(new Uri("http://danbooru.donmai.us/data/c7537035324b1902b317a5e395e99262.png"));
+            PostBrowser.LoadCompleted += (@s, e) =>
                 {
-                    progressBar.Value = e.Progress;
-                    if (e.Progress == 100)
-                        VisualStateManager.GoToState(this, "Loaded", true);
+                    VisualStateManager.GoToState(this, "Loaded", true);
                 };
-            image.ImageFailed += (@s, e) =>
-                {
-                    System.Diagnostics.Debugger.Break();
-                };
-            PostImage.Source = image;
-
-            /*
-           if (Session.Instance.SelectedPost.LargeImageSource == null)
-            {
-                BackgroundWorker bw = new BackgroundWorker();
-                bw.DoWork += (@s, e) =>
-                    {
-                        Session.Instance.Cache.EnsureSampleCache(Session.Instance.SelectedPost);
-                        e.Result = Session.Instance.Cache.GetSampleStream(Session.Instance.SelectedPost);
-                    };
-                bw.RunWorkerCompleted += (@s, e) =>
-                    {
-                        VisualStateManager.GoToState(this, "Loaded", true);
-                        
-                        BitmapImage img = new BitmapImage();
-                        img.SetSource((Stream)e.Result);
-                        Session.Instance.SelectedPost.LargeImageSource = img;
-                        PostImage.Source = Session.Instance.SelectedPost.LargeImageSource;
-                    };
-                bw.RunWorkerAsync();
-            } 
-            */
-
-
         }
-
-
     }
 }

@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Input;
 using CardboardBox.Utilities;
@@ -78,6 +79,9 @@ namespace CardboardBox
         /// </summary>
         public Session()
         {
+            // Get Isolated Storage Instance
+            IsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication();
+
             // Try to restore user credentials
             settings = IsolatedStorageSettings.ApplicationSettings;
             if (settings.Contains("username") && settings.Contains("hash"))
@@ -112,7 +116,10 @@ namespace CardboardBox
         private readonly IsolatedStorageSettings settings;
         private readonly Dictionary<Int32, UserLevel> userLevels;
 
-
+        /// <summary>
+        /// Gets the IsolatedStorage instance for the application.
+        /// </summary>
+        public IsolatedStorageFile IsolatedStorage { get; private set; }
 
         /// <summary>
         ///     Gets or sets credentials for current session.
@@ -123,7 +130,21 @@ namespace CardboardBox
         ///     Gets the current user info.
         /// </summary>
         public User User { get; private set; }
-        
+
+        /// <summary>
+        /// Gets or sets the cookie for this session.
+        /// </summary>
+        public CookieContainer Cookie { get; set; }
+
+        #region Posts
+
+        /// <summary>
+        /// Gets or sets a list of newest posts.
+        /// </summary>
+        public List<Post> NewPosts { get; set; } 
+
+
+        #endregion
 
         #region User Preferences
 
@@ -238,7 +259,7 @@ namespace CardboardBox
                                                                                       SiteUrl + UserIndexUrl);
                     userRequest.AddArgument("name", Instance.Credentials.Username);
 
-                    userRequest.ExecuteRequest();
+                    userRequest.ExecuteRequest(Instance.Cookie);
                     while (userRequest.Status == -1) ; // Wait for request to complete
                     User[] result = userRequest.Result;
                     User =

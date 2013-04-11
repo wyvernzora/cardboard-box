@@ -87,7 +87,7 @@
 				<TextBlock x:Name="TextBlockError" Margin="0" Grid.Row="4" TextWrapping="Wrap" Text="Error Message Goes Here" FontSize="18.667" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FFE01919" Height="0"/>
 			</Grid>
 		</Grid>
-		<Image x:Name="AppBanner" Margin="30,0" Source="banner-dark.png"/>
+		<Image x:Name="AppBanner" Margin="30,0" Source="Assets/banner-dark-alt.png"/>
 		
 		
 		

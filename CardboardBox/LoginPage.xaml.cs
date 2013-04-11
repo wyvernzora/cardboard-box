@@ -48,7 +48,7 @@ namespace CardboardBox
             InitializeComponent();
 
             // Load Appropriate Banner
-            String bannerUrl = App.IsInDarkTheme() ? "/Assets/banner-dark.png" : "/Assets/banner-light.png";
+            String bannerUrl = App.IsInDarkTheme() ? "/Assets/banner-dark-alt.png" : "/Assets/banner-light-alt.png";
             BitmapImage bannerSrc = new BitmapImage(new Uri(bannerUrl, UriKind.Relative));
             AppBanner.Source = bannerSrc;
 
@@ -163,7 +163,7 @@ namespace CardboardBox
                     }
                 });
 
-            request.ExecuteRequest();
+            request.ExecuteRequest(Session.Instance.Cookie);
         }
     }
 }

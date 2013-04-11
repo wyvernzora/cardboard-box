@@ -24,6 +24,7 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
+using System.Diagnostics;
 
 namespace libWyvernzora.Utilities
 {
@@ -41,13 +42,14 @@ namespace libWyvernzora.Utilities
         /// </summary>
         /// <param name="begin"></param>
         /// <param name="end"></param>
+        [DebuggerHidden]
         public ActionLock(Action begin, Action end)
         {
             this.end = end;
             begin();
         }
 
-
+        [DebuggerHidden]
         public void Dispose()
         {
             end();

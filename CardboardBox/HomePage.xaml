@@ -20,12 +20,13 @@
 
 	<phone:PhoneApplicationPage.ApplicationBar>
 		<shell:ApplicationBar IsVisible="true" IsMenuEnabled="True" Mode="Default" Opacity="0.65">
-			<shell:ApplicationBarIconButton x:Name="AppBarSettingsButton" IconUri="/Assets/SDK/feature.settings.png" Text="Settings" />
-			<shell:ApplicationBarIconButton x:Name="AppBarRefreshButton" IconUri="/Assets/SDK/refresh.png" Text="Refresh" />
 			
 			<shell:ApplicationBar.MenuItems>
 				<shell:ApplicationBarMenuItem x:Name="AppBarLogout" Text="logout" />
 			</shell:ApplicationBar.MenuItems>
+			
+			<shell:ApplicationBarIconButton x:Name="AppBarSettingsButton" IconUri="/Assets/SDK/feature.settings.png" Text="settings" />
+
 		</shell:ApplicationBar>	
 	</phone:PhoneApplicationPage.ApplicationBar>
 
@@ -39,7 +40,24 @@
         	</controls:Panorama.TitleTemplate>
 
             <!--Panorama item one-->
-            <controls:PanoramaItem x:Name="WhatsNewPanoramaItem" Header="what's new"/>
+            <controls:PanoramaItem x:Name="WhatsNewPanoramaItem" Header="what's new">
+            	<Grid Margin="0">
+            		<ListBox Margin="0">
+            			<ListBox.ItemsPanel>
+            				<ItemsPanelTemplate>
+            					<toolkit:WrapPanel Orientation="Horizontal" />
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Image Width="120" Height="120" Margin="10,10,10,10" Source="{Binding Path=PreviewUrl}" />
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+
+					</ListBox>
+            	</Grid>
+            </controls:PanoramaItem>
 
             <!--Panorama item three-->
             <controls:PanoramaItem Header="favorites" >
@@ -64,7 +82,6 @@
             				<TextBlock x:Name="JoinDateTextBlock" Margin="16,0,0,0" TextWrapping="Wrap" Text="2012-12-21" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeLarge}"/>
             				<TextBlock Margin="16,10,0,0" TextWrapping="Wrap" Foreground="{StaticResource PhoneDisabledBrush}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}" Text="user id"/>
             				<TextBlock x:Name="UserIdTextBlock" Margin="16,0,0,0" TextWrapping="Wrap" Text="1234567" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeLarge}"/>
-							
             			</StackPanel>
             		</ScrollViewer>
             	</Grid>

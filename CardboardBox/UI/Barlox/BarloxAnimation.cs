@@ -457,6 +457,12 @@ namespace libWyvernzora.BarlogX.Animation
         public void Dispose()
         {
             if (raw != null) raw.Close();
+#if WP7
+            foreach (var f in frames)
+            {
+                f.Source.SetSource(null);
+            }
+#endif
         }
 
         /// <summary>

@@ -6,7 +6,8 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:System="clr-namespace:System;assembly=mscorlib" 
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    xmlns:controls3="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     x:Class="CardboardBox.ViewPost" 
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
@@ -22,7 +23,11 @@
     			<VisualStateGroup.Transitions>
     				<VisualTransition GeneratedDuration="0:0:0.5"/>
     			</VisualStateGroup.Transitions>
-    			<VisualState x:Name="Loading"/>
+    			<VisualState x:Name="Loading">
+    				<Storyboard>
+    					<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="PostBrowser" d:IsOptimized="True"/>
+    				</Storyboard>
+    			</VisualState>
     			<VisualState x:Name="Loaded">
     				<Storyboard>
     					<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="LoadingAnimationImage" d:IsOptimized="True"/>
@@ -34,23 +39,27 @@
     						</DiscreteObjectKeyFrame>
     					</ObjectAnimationUsingKeyFrames>
     					<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid" d:IsOptimized="True"/>
+    					<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="PostBrowser" d:IsOptimized="True"/>
     				</Storyboard>
     			</VisualState>
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
         <!--Pivot Control-->
-        <controls:Pivot Title="VIEW POST">
+        <controls3:LockablePivot x:Name="PivotRoot" Title="VIEW POST">
             <!--Pivot item one-->
             <controls:PivotItem Header="image">
-                <Grid>
-                	<Image x:Name="PostImage" Margin="0"/>
-                	<Grid x:Name="grid" Margin="0" Width="236" Height="242" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid Margin="8">
+                	<phone:WebBrowser x:Name="PostBrowser" Margin="0" Opacity="0"/>
+                
+                    
+                    
+                	<Grid x:Name="grid" Margin="0" Width="236" Height="242" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
                 		<Grid.RowDefinitions>
                 			<RowDefinition/>
                 			<RowDefinition Height="Auto"/>
                 		</Grid.RowDefinitions>
-                		<Image x:Name="LoadingAnimationImage" Margin="0"/>
-                		<ProgressBar x:Name="progressBar" Margin="0" Grid.Row="1"/>
+                		<Image x:Name="LoadingAnimationImage" Margin="0" IsHitTestVisible="False"/>
+                		<ProgressBar x:Name="progressBar" Margin="0" Grid.Row="1" IsHitTestVisible="False" IsTabStop="False"/>
                 	</Grid>
                 
                     
@@ -63,7 +72,7 @@
             <controls:PivotItem Header="comments">
                 <Grid/>
             </controls:PivotItem>
-        </controls:Pivot>
+        </controls3:LockablePivot>
     </Grid>
     
 </phone:PhoneApplicationPage>

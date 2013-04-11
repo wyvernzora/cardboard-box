@@ -148,12 +148,13 @@ namespace libDanbooru2
         /// Executes the Danbooru HTTP request.
         /// </summary>
         /// <returns></returns>
-        public void ExecuteRequest()
+        public void ExecuteRequest(CookieContainer cookie)
         {
             String url = queryUrl + String.Join("&", from a in args select String.Format("{0}={1}", a.Key, a.Value));
 
             HttpWebRequest request = (HttpWebRequest) HttpWebRequest.Create(url);
-            request.UserAgent = "Mozilla/5.0 (Windows; Windows 8.0) CardboardBox Danbooru Client 0.1a";
+            request.CookieContainer = cookie;
+            request.UserAgent = Constants.UserAgentString;
             request.BeginGetResponse(OnResponseReceived, request);
         }
     }

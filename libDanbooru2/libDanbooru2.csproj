@@ -64,13 +64,10 @@
     <Compile Include="IO\PartialStreamEx.cs" />
     <Compile Include="IO\PathEx.cs" />
     <Compile Include="IO\StreamEx.cs" />
-    <Compile Include="IO\UnifiedFileSystem\FileExtLengthValidator.cs" />
-    <Compile Include="IO\UnifiedFileSystem\FileExtListValidator.cs" />
-    <Compile Include="IO\UnifiedFileSystem\FileNameDescriptor.cs" />
-    <Compile Include="IO\UnifiedFileSystem\FileSystemObject.cs" />
-    <Compile Include="IO\UnifiedFileSystem\FileSystemObjectType.cs" />
-    <Compile Include="IO\UnifiedFileSystem\IFileExtValidator.cs" />
-    <Compile Include="IO\UnifiedFileSystem\IFileSystem.cs" />
+    <Compile Include="IO\FileExtLengthValidator.cs" />
+    <Compile Include="IO\FileExtListValidator.cs" />
+    <Compile Include="IO\FileNameDescriptor.cs" />
+    <Compile Include="IO\IFileExtValidator.cs" />
     <Compile Include="Post.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rating.cs" />

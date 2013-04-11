@@ -67,8 +67,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IO\IsolatedStorageFileSystem.cs" />
-    <Compile Include="IO\IsolatedStorageFileSystemObject.cs" />
+    <Compile Include="Nerwork\FileDownloader.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
@@ -108,8 +107,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\home-page-header.png" />
+    <Content Include="Assets\banner-dark-alt.png" />
+    <Content Include="Assets\banner-light-alt.png" />
     <Content Include="Assets\SDK\feature.settings.png" />
     <Content Include="Assets\SDK\refresh.png" />
+    <Content Include="SplashScreenImage.jpg" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
@@ -127,8 +129,6 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\SplashScreenImage.jpg" />
-    <Resource Include="banner-dark.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libDanbooru2\libDanbooru2.csproj">
@@ -140,7 +140,7 @@
     <Content Include="Assets\banner-dark.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Nerwork\" />
+    <Folder Include="IO\" />
     <Folder Include="ViewModel\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
