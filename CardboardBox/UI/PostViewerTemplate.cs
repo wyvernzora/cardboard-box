@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Resources;
+using libDanbooru2;
 
 namespace CardboardBox
 {
@@ -20,9 +21,9 @@ namespace CardboardBox
             template = sr.ReadToEnd();
         }
 
-        public String GeneratePage(String colorCode, String postUri)
+        public String GeneratePage(String colorCode, Post post)
         {
-            return String.Format(template, colorCode, postUri);
+            return String.Format(template, colorCode, Session.SiteUrl + post.FileUrl);
         }
     }
 }

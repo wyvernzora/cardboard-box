@@ -72,6 +72,8 @@ namespace CardboardBox
         public const String PreviewDir = "/ssd/data/preview/";
 
 
+        public const Int32 PostRequestPageSize = 100;
+
 // ReSharper restore InconsistentNaming
 
         #endregion
@@ -273,18 +275,20 @@ namespace CardboardBox
                     PostViewerTemplate = new PostViewerTemplate("Assets/template.html");
 
                     // Load first 100 images
-                    var newRequest = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
-                    newRequest.AddArgument("limit", 60);
-                    if (MaxRating == Rating.Safe) newRequest.AddArgument("tag", "rating:s");
-                    else if (maxRating == Rating.Questionable) newRequest.AddArgument("tag", "-rating:e");
-                    newRequest.ExecuteRequest(Cookie);
-                    while (newRequest.Status == -1) ;
-                    Post[] newPosts = newRequest.Result;
-                    NewPosts = new List<Post>(newPosts);
+                    NewPosts = new List<Post>();
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var newRequest = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
+                        newRequest.AddArgument("limit", PostRequestPageSize);
+                        if (MaxRating == Rating.Safe) newRequest.AddArgument("tag", "rating:s");
+                        else if (maxRating == Rating.Questionable) newRequest.AddArgument("tag", "-rating:e");
+                        newRequest.ExecuteRequest(Cookie);
+                        while (newRequest.Status == -1) ;
+                        Post[] newPosts = newRequest.Result;
+                        NewPosts.AddRange(newPosts);
+                    }
                     foreach (var p in NewPosts)
                         p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
-
-
                 };
             bw.RunWorkerCompleted += (@s, e) => callback();
             bw.RunWorkerAsync();

@@ -43,14 +43,18 @@ namespace CardboardBox
 
             // Load Image
             String page = Session.Instance.PostViewerTemplate.GeneratePage(App.IsInDarkTheme() ? "000000" : "FFFFFF",
-                                                                           Session.SiteUrl +
-                                                                           Session.Instance.Selected.FileUrl);
+                                                                           Session.Instance.Selected);
             PostBrowser.NavigateToString(page);
             PostBrowser.LoadCompleted += (@s, e) =>
                 {
                     VisualStateManager.GoToState(this, "Loaded", true);
                     animation.IsEnabled = false;
                 };
+            PostBrowser.NavigationFailed += (@s, e) =>
+                {
+                    System.Diagnostics.Debugger.Break();
+                };
+           // PostBrowser.ScriptNotify
         }
     }
 }

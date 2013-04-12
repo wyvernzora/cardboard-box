@@ -156,9 +156,17 @@ namespace CardboardBox
                         TextboxPassword.Password = String.Empty;
                         TextboxPassword.Focus();
                     }
+                    else if (request.Status == 16)
+                    {
+                        // No connection
+                        TextBlockError.Text = "Server not responding: check your network!";
+                        VisualStateManager.GoToState(this, "Error", true);
+                        TextboxPassword.Password = String.Empty;
+                        TextboxPassword.Focus();
+                    }
                     else
                     {
-                        TextBlockError.Text = "Unexpected error, please try again.";
+                        TextBlockError.Text = String.Format("Error {0}, please try again.", request.Status);
                         VisualStateManager.GoToState(this, "Error", true);
                     }
                 });

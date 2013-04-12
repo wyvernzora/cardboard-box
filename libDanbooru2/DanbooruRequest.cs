@@ -126,10 +126,11 @@ namespace libDanbooru2
 
                 queryStatus = (Int32)response.StatusCode;
             }
-            catch (System.Net.WebException)
+            catch (System.Net.WebException ex)
             {
                 queryResult = null;
-                queryStatus = (Int32)HttpStatusCode.Forbidden;
+                //queryStatus = (Int32)HttpStatusCode.Forbidden;
+                queryStatus = (Int32)ex.Status;
             }
             catch (Exception x)
             {
