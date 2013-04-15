@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -74,6 +75,9 @@ namespace CardboardBox
 
         private void PageLoaded()
         {
+            // Update the header text
+            PivotRoot.Title = "VIEWING POST #" + Session.Instance.Selected.ID.ToString(CultureInfo.InvariantCulture);
+
             // Lock Down the Pivot
             PivotRoot.IsLocked = true;
 
@@ -92,7 +96,6 @@ namespace CardboardBox
                             PostBrowser.NavigateToString(page);
                         });
                 });
-
             
         }
 

@@ -68,7 +68,9 @@
                 
             </controls:PivotItem>
             <controls:PivotItem x:Name="InfoPivotItem" Header="info" Margin="12,28,12,0">
-            	<Grid/>
+            	<ScrollViewer Margin="0" HorizontalContentAlignment="Stretch">
+            		<StackPanel/>
+            	</ScrollViewer>
             </controls:PivotItem>
 
             <!--Pivot item two-->
