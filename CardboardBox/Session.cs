@@ -69,7 +69,7 @@ namespace CardboardBox
 
         public const String UserIndexUrl = "/user/index.json?";
 
-        public const String PostIndexUrl = "/post/index.json?";
+        public const String PostIndexUrl = "/posts.json?";
 
         public const String CommentIndexUrl = "/comments.json?";
         

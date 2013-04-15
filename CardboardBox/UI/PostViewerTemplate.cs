@@ -23,7 +23,11 @@ namespace CardboardBox
 
         public String GeneratePage(String colorCode, Post post)
         {
-            return String.Format(template, colorCode, Session.SiteUrl +  post.FileUrl);
+            String fileUrl = post.HasLarge ?
+                Session.SiteUrl + "/data/sample/sample-" + post.MD5 + "." + post.FileExtension
+                : Session.SiteUrl + "/data/" + post.MD5 + "." + post.FileExtension;
+            
+            return String.Format(template, colorCode, fileUrl);
         }
     }
 }

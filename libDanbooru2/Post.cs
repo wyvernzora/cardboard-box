@@ -39,13 +39,6 @@ namespace libDanbooru2
         [DataMember(Name = "parent_id")]
         public Int32? ParentID { get; set; }
 
-
-        [DataMember(Name = "has_notes")]
-        public Boolean HasNotes { get; set; }
-
-        [DataMember(Name = "has_comments")]
-        public Boolean HasComments { get; set; }
-
         [DataMember(Name = "has_children")]
         public Boolean HasChildren { get; set; }
 
@@ -60,39 +53,45 @@ namespace libDanbooru2
             set { RatingString = value.ToString().Substring(0, 1).ToLower(); }
         }
 
-        [DataMember(Name = "status")]
-        public String Status { get; set; }
 
-        [DataMember(Name = "author")]
+
+        [DataMember(Name = "uploader_name")]
         public String Author { get; set; }
 
-        [DataMember(Name = "score")]
-        public Int32 Score { get; set; }
+        [DataMember(Name = "uploader_id")]
+        public Int32 AuthorID { get; set; }
 
         [DataMember(Name = "md5")]
         public String MD5 { get; set; }
 
-        [DataMember(Name = "source")]
-        public Uri Source { get; set; }
 
         // File
-        [DataMember(Name = "file_url")]
-        public Uri FileUrl { get; set; }
-
-        [DataMember(Name = "height")]
+        [DataMember(Name = "image_height")]
         public Int32 Height { get; set; }
 
-        [DataMember(Name = "width")]
+        [DataMember(Name = "image_width")]
         public Int32 Width { get; set; }
 
         [DataMember(Name = "file_size")]
         public Int32 FileSize { get; set; }
 
+        [DataMember(Name = "file_ext")]
+        public String FileExtension { get; set; }
 
+        [DataMember(Name = "tag_string_artist")]
+        public String ArtistTagsString { get; set; }
 
-        [DataMember(Name = "tags")]
-        public String RawTags { get; set; }
+        [DataMember(Name = "tag_string_copyright")]
+        public String CopyrightTagsString { get; set; }
 
+        [DataMember(Name = "tag_string_character")]
+        public String CharacterTagsString { get; set; }
+
+        [DataMember(Name = "tag_string_general")]
+        public String GeneralTagsString { get; set; }
+
+        [DataMember(Name = "has_large")]
+        public Boolean HasLarge { get; set; }
 
         #region Additional properties (not serialized)
 

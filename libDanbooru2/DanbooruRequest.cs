@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Json;
@@ -118,9 +119,25 @@ namespace libDanbooru2
                 // Get Response Object
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
+#if DEBUG
+                    MemoryStream tmp = new MemoryStream();
+                    response.GetResponseStream().CopyTo(tmp);
+
+                    tmp.Position = 0;
+                    StreamReader sr = new StreamReader(tmp);
+                    String test = sr.ReadToEnd();
+
+                    tmp.Position = 0;
+
+                    var serializer = new DataContractJsonSerializer(typeof(T));
+                    queryResult = serializer.ReadObject(tmp) as T;
+#else
 
                     var serializer = new DataContractJsonSerializer(typeof(T));
                     queryResult = serializer.ReadObject(response.GetResponseStream()) as T;
+#endif
+
+
 
                 }
 
