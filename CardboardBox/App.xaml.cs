@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MemoryDiagnostics;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using libDanbooru2;
@@ -29,6 +30,8 @@ namespace CardboardBox
         /// </summary>
         public App()
         {
+            Logging.D("Application Initializing...");
+
             // Global handler for uncaught exceptions. 
             UnhandledException += Application_UnhandledException;
 
@@ -39,10 +42,12 @@ namespace CardboardBox
             InitializePhoneApplication();
 
             // Show graphics profiling information while debugging.
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
+     //       if (System.Diagnostics.Debugger.IsAttached)
+     //       {
                 // Display the current frame rate counters.
-                //Application.Current.Host.Settings.EnableFrameRateCounter = true;
+                Application.Current.Host.Settings.EnableFrameRateCounter = true;
+
+                MemoryDiagnosticsHelper.Start(TimeSpan.FromMilliseconds(1000), true);
 
                 // Show the areas of the app that are being redrawn in each frame.
                 //Application.Current.Host.Settings.EnableRedrawRegions = true;
@@ -56,7 +61,9 @@ namespace CardboardBox
                 // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
-            }
+
+
+       //     }
 
         }
 
@@ -64,29 +71,36 @@ namespace CardboardBox
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            Logging.D("Application Launching...");
         }
 
         // Code to execute when the application is activated (brought to foreground)
         // This code will not execute when the application is first launched
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
+            Logging.D("Application Activated");
         }
 
         // Code to execute when the application is deactivated (sent to background)
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
+            Logging.D("Application Deactivated");
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
         // This code will not execute when the application is deactivated
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
+            Logging.D("Application Closing");
         }
 
         // Code to execute if a navigation fails
         private void RootFrame_NavigationFailed(object sender, NavigationFailedEventArgs e)
         {
+            Logging.D("ERROR: Navigation Failed! ExceptionType = {0}; Message = {1}; StackTrace = {2}",
+                      e.Exception.GetType().FullName, e.Exception.Message, e.Exception.StackTrace);
+
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 // A navigation has failed; break into the debugger
@@ -97,6 +111,9 @@ namespace CardboardBox
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
+
+            Logging.D("ERROR: Crash! ExceptionType = {0}; Message = {1}; StackTrace = {2}",
+                      e.ExceptionObject.GetType().FullName, e.ExceptionObject.Message, e.ExceptionObject.StackTrace);
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger

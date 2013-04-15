@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.IsolatedStorage;
@@ -33,6 +34,7 @@ using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using CardboardBox.UI;
 using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
 using libDanbooru2;
@@ -69,10 +71,12 @@ namespace CardboardBox
 
         public const String PostIndexUrl = "/post/index.json?";
 
+        public const String CommentIndexUrl = "/comments.json?";
+        
         public const String PreviewDir = "/ssd/data/preview/";
 
 
-        public const Int32 PostRequestPageSize = 100;
+        public const Int32 PostRequestPageSize = 60;
 
 // ReSharper restore InconsistentNaming
 
@@ -84,15 +88,19 @@ namespace CardboardBox
         /// </summary>
         public Session()
         {
+            Logging.D("Session Constructor");
+
             // Get Isolated Storage Instance
             IsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication();
 
             // Try to restore user credentials
             settings = IsolatedStorageSettings.ApplicationSettings;
             if (settings.Contains("username") && settings.Contains("hash"))
+            {
                 Credentials = DanbooruCredentials.FromCredentials(settings["username"].ToString(),
                                                                   settings["hash"].ToString());
-
+                Logging.D("Found credentials for {0}", Credentials.Username);
+            }
             // For the testing purposes, enforce maximum rating.
             MaxRating = Rating.Safe;
 
@@ -111,11 +119,6 @@ namespace CardboardBox
                     {50, new UserLevel(50, "Administrator", Int32.MaxValue)}
                 };
             
-
-#if DEBUG
-            // Debugging credentials for quick testing
-            //Credentials = new DanbooruCredentials("CardboardBoxTest", "mikumiku");
-#endif
         }
 
         private readonly IsolatedStorageSettings settings;
@@ -151,7 +154,7 @@ namespace CardboardBox
         /// <summary>
         /// Gets or sets a list of newest posts.
         /// </summary>
-        public List<Post> NewPosts { get; set; }
+        public PostTupleCollection NewPosts { get; set; }
 
         /// <summary>
         /// Gets or sets currently selected post.
@@ -230,6 +233,57 @@ namespace CardboardBox
             Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
         }
 
+        /// <summary>
+        /// Loads more New Posts on the caller thread.
+        /// May block for a long time.
+        /// </summary>
+        /// <param name="pages"></param>
+        internal PostTuple[] GetMoreNewPosts(Int32 pages)
+        {
+            Logging.D("Loading more new posts!");
+            List<PostTuple> tuples = new List<PostTuple>();
+            Int32 retry = 0;
+            for (int i = 0; i < pages; i++)
+            {
+                var newRequest = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
+                newRequest.AddArgument("limit", PostRequestPageSize);
+                if (MaxRating == Rating.Safe) newRequest.AddArgument("tag", "rating:s");
+                else if (maxRating == Rating.Questionable) newRequest.AddArgument("tag", "-rating:e");
+
+                Int32 page = ((NewPosts.Count + tuples.Count) * 3) / PostRequestPageSize + 1;
+
+                newRequest.AddArgument("page", page);
+
+                newRequest.ExecuteRequest(Cookie);
+                while (newRequest.Status == -1) ;
+                Post[] newPosts = newRequest.Result;
+
+                if (newRequest.Status != 200)
+                {
+                    Logging.D("ERROR: Failed to load more new posts, HTTP Status = {0}, {1} retries left", newRequest.Status, retry);
+                    i--;
+                    retry++;
+                    if (retry >= 3)
+                    {
+                        Logging.D("ERROR: Failed to load more posts and retries have been used up!");
+                        return tuples.ToArray();
+                    }
+
+                    continue;
+                }
+
+                foreach (var p in newPosts)
+                   p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
+
+                for (int j = 0; j < newPosts.Length; j += 3)
+                    tuples.Add(new PostTuple {First = newPosts[j], Second = newPosts[j + 1], Third = newPosts[j + 2]});
+            }
+
+
+            Logging.D("More new posts loaded!");
+            return tuples.ToArray();
+        }
+
         #endregion
 
         #region Preference Settings Notification
@@ -254,6 +308,8 @@ namespace CardboardBox
             BackgroundWorker bw = new BackgroundWorker();
             bw.DoWork += (@s, e) =>
                 {
+                    Logging.D("Starting Session Initialization");
+
                     // Get User Profile
                     DanbooruRequest<User[]> userRequest = new DanbooruRequest<User[]>(Instance.Credentials,
                                                                                       SiteUrl + UserIndexUrl);
@@ -266,29 +322,22 @@ namespace CardboardBox
                         result.First(
                             u => StringComparer.InvariantCultureIgnoreCase.Equals(instance.Credentials.Username, u.Name));
 
+                    Logging.D("User profile retrieved");
+
 #if DEBUG
                     if (User == null)
                         Debugger.Break(); // Since user is logged in, the profile MUST be there.
 #endif
+                    Logging.D("Loading posts");
 
                     // Load Template generator
                     PostViewerTemplate = new PostViewerTemplate("Assets/template.html");
 
-                    // Load first 100 images
-                    NewPosts = new List<Post>();
-                    for (int i = 0; i < 5; i++)
-                    {
-                        var newRequest = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
-                        newRequest.AddArgument("limit", PostRequestPageSize);
-                        if (MaxRating == Rating.Safe) newRequest.AddArgument("tag", "rating:s");
-                        else if (maxRating == Rating.Questionable) newRequest.AddArgument("tag", "-rating:e");
-                        newRequest.ExecuteRequest(Cookie);
-                        while (newRequest.Status == -1) ;
-                        Post[] newPosts = newRequest.Result;
-                        NewPosts.AddRange(newPosts);
-                    }
-                    foreach (var p in NewPosts)
-                        p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
+                    // Load first 3 pages
+                    NewPosts = new PostTupleCollection();
+                    PostTuple[] tuples = GetMoreNewPosts(3);
+                    foreach (var t in tuples) NewPosts.Add(t);
+
                 };
             bw.RunWorkerCompleted += (@s, e) => callback();
             bw.RunWorkerAsync();

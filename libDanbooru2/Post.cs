@@ -97,12 +97,6 @@ namespace libDanbooru2
         #region Additional properties (not serialized)
 
         [IgnoreDataMember]
-        public BitmapSource ImageSource { get; set; }
-
-        [IgnoreDataMember]
-        public BitmapSource LargeImageSource { get; set; }
-
-        [IgnoreDataMember]
         public Uri PreviewUrl { get; set; }
 
         #endregion

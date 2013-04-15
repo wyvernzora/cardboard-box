@@ -51,6 +51,7 @@
     <Reference Include="mscorlib.extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comment.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Core\ArrayOps.cs" />
     <Compile Include="Core\BitOps.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="UserLevel.cs" />
     <Compile Include="Utilities\ActionLock.cs" />
     <Compile Include="Utilities\Counter.cs" />
+    <Compile Include="Utilities\VisualTreeUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Network\" />

@@ -67,7 +67,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Logging.cs" />
+    <Compile Include="MemoryDiagnosticsHelper.cs" />
     <Compile Include="Nerwork\FileDownloader.cs" />
+    <Compile Include="UI\PostTuple.cs" />
     <Compile Include="UI\PostViewerTemplate.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="HomePage.xaml.cs">
@@ -86,6 +89,7 @@
     <Compile Include="UI\ScrollViewMonitor.cs" />
     <Compile Include="Utilities\ActionCommand.cs" />
     <Compile Include="Utilities\DependencyPropertyListener.cs" />
+    <Compile Include="Utilities\PostTupleCollection.cs" />
     <Compile Include="ViewPost.xaml.cs">
       <DependentUpon>ViewPost.xaml</DependentUpon>
     </Compile>

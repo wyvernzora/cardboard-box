@@ -16,9 +16,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CardboardBox.Nerwork;
 using CardboardBox.UI;
+using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using libDanbooru2;
+using libDanbooru2.Utilities;
 using libWyvernzora.Utilities;
 
 namespace CardboardBox
@@ -27,9 +29,9 @@ namespace CardboardBox
     {
         #region Constants
 
-        private const Int32 PostPageLoadingThreshold = 640;
+        private const Int32 PostPageLoadingThreshold = 240;
 
-        private const Int32 PostPageSize = 30;
+        private const Int32 PostPageSize = 10; // Rows
 
         #endregion
 
@@ -87,9 +89,11 @@ namespace CardboardBox
             AttachWhatsNewHandlers();
 
             // Load Initial Posts
+            NewPostList.ItemsSource = NewPosts;
+
             // Add New Post Entries
-            foreach (var p in Session.Instance.NewPosts)
-                NewPostList.Items.Add(p);
+          //  foreach (var p in Session.Instance.NewPosts)
+          //      NewPostList.Items.Add(p);
 
             Loaded += (@s, e) =>
                 {
@@ -101,26 +105,44 @@ namespace CardboardBox
                     newPostListMonitor = new ScrollViewMonitor(NewPostList);
 
                     newPostListMonitor.Scroll += (@o, a) =>
-                    {
-                        WhatsNewPanoramaItem.Header = a.OffsetY;
-                        if (a.OffsetY > a.MaxY - PostPageLoadingThreshold)
-                            LoadNextNewPostPage();
-                    };
+                        {
+                            if (a.OffsetY > a.MaxY - PostPageLoadingThreshold)
+                                LoadNextNewPostPage();
+                        };
 
                 };
         }
 
         #region Whats New
 
+        public PostTupleCollection NewPosts 
+        { get { return Session.Instance.NewPosts; } }
+
         private void AttachWhatsNewHandlers()
-        {            
-            
+        {
             // Attach Handlers
             NewPostList.Tap += (@s, e) =>
                 {
-                    Post p = NewPostList.SelectedItem as Post;
+                    var p = NewPostList.SelectedItem as PostTuple;
                     if (p == null) return;
-                    Session.Instance.Selected = p;
+
+                    Int32 row = (Int32)Math.Floor(e.GetPosition(NewPostList).X / 130);
+
+                    switch (row)
+                    {
+                        case 0:
+                            Session.Instance.Selected = p.First;
+                            break;
+                        case 1:
+                            Session.Instance.Selected = p.Second;
+                            break;
+                        case 2:
+                            Session.Instance.Selected = p.Third;
+                            break;
+                        default:
+                            return;
+                    }
+
                     NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
                 };
         }
@@ -131,44 +153,18 @@ namespace CardboardBox
                 return;
 
             newPostsLoading = true;
-            Int32 count = NewPostList.Items.Count;
-          //  SystemTray.ProgressIndicator.IsVisible = true;
-           // SystemTray.ProgressIndicator.IsIndeterminate = true;
 
             ThreadPool.QueueUserWorkItem(@a =>
                 {
-                    if (Session.Instance.NewPosts.Count - count <= PostPageSize)
-                    {
-                        var request = new DanbooruRequest<Post[]>(Session.Instance.Credentials,
-                                                                  Session.SiteUrl + Session.PostIndexUrl);
-
-                        if (Session.Instance.MaxRating == Rating.Safe) request.AddArgument("tag", "rating:s");
-                        else if (Session.Instance.MaxRating == Rating.Questionable) request.AddArgument("tag", "-rating:e");
-
-                        request.AddArgument("limit", Session.PostRequestPageSize);
-                        request.AddArgument("page", count / PostPageSize + 1);
-
-                        request.ExecuteRequest(Session.Instance.Cookie);
-                        while (request.Status == -1) ; // Wait
-
-                        Post[] result = request.Result;
-                        if (result == null)
-                            return;
-                        foreach (var p in result)
-                            p.PreviewUrl = new Uri(Session.SiteUrl + Session.PreviewDir + p.MD5 + ".jpg");
-
-                        Session.Instance.NewPosts.AddRange(result);
-                    }
+                    PostTuple[] tuples = Session.Instance.GetMoreNewPosts(1);
 
                     Dispatcher.BeginInvoke(() =>
                         {
-                            for (int i = count; i < count + PostPageSize; i++)
-                                NewPostList.Items.Add(Session.Instance.NewPosts[i]);
+                            foreach (var t in tuples)
+                                NewPosts.Add(t);
 
                             newPostsLoading = false;
 
-                 //           SystemTray.ProgressIndicator.IsVisible = false;
-               //             SystemTray.ProgressIndicator.IsIndeterminate = false;
                         });
                 });
 
@@ -176,12 +172,16 @@ namespace CardboardBox
 
         #endregion
 
+
+
         private void AttachAppBarHandlers()
         {
             // Attach App Bar Commands
             ((ApplicationBarMenuItem) ApplicationBar.MenuItems[1]).Click += (@s, e) => Session.Instance.LogOut();
             
         }
+
+
 
     }
 }

@@ -43,7 +43,7 @@ namespace CardboardBox.UI
         private void OnScroll(Double x, Double y, Double mx, Double my)
         {
             if (scroll != null)
-                scroll(target, new ScrollEventArgs() {OffsetX = x, OffsetY = y, MaxX = mx, MaxY = my});
+                scroll(target, new ScrollEventArgs {OffsetX = x, OffsetY = y, MaxX = mx, MaxY = my});
         }
 
         #endregion
