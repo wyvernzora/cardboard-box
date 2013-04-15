@@ -78,7 +78,7 @@ namespace libWyvernzora.Core
 
             T[] tmp = new T[length];
             Array.Copy(array, tmp, NumericOps.Min(array.Length, length));
-            for (int i = NumericOps.Min(array.Length, length); i >= 0; i--)
+            for (int i = NumericOps.Min(array.Length, length) - 1; i >= array.Length; i--)
                 tmp[i] = value;
             return tmp;
         }

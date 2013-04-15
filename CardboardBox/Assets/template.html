@@ -1,9 +1,15 @@
 <!DOCTYPE html>
+<head>
+    <title>Opix Post Browser Template</title>
+    <script>
+        function notify() {{window.external.notify("FAIL");}}
+    </script>
+</head>
 <html>
 	<body bgcolor="#{0}" style="width:100%; height:100%">
 		<meta name="viewport" content="width=320, height=320, initial-scale=1"/>
 		<center>
-			<img style="width:100%; height:100%; margin:0 auto" src="{1}" onerror="alert('IMG_LOAD_FAIL')"/>
+			<img style="width:100%; height:100%; margin:0 auto" src="{1}" onerror="notify()"/>
 		</center>
 	</body>
 </html>

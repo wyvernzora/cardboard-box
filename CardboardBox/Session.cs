@@ -38,6 +38,7 @@ using CardboardBox.UI;
 using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
 using libDanbooru2;
+using libWyvernzora.Core;
 
 namespace CardboardBox
 {
@@ -77,6 +78,8 @@ namespace CardboardBox
 
 
         public const Int32 PostRequestPageSize = 60;
+
+        public const Int32 PostRequestTupleSize = 20;
 
 // ReSharper restore InconsistentNaming
 
@@ -157,6 +160,11 @@ namespace CardboardBox
         public PostTupleCollection NewPosts { get; set; }
 
         /// <summary>
+        /// Gets or sets the number of pages loaded for new posts.
+        /// </summary>
+        public Int32 NewPostPagesLoaded { get; set; }
+
+        /// <summary>
         /// Gets or sets currently selected post.
         /// </summary>
         public Post Selected { get; set; }
@@ -182,6 +190,18 @@ namespace CardboardBox
                     maxRating = value;
                     OnPropertyChanged("MaxRating");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Gets the rating for query that satisfies the MaxRating setting.
+        /// </summary>
+        public String MaxComplement
+        {
+            get
+            {
+                if (maxRating == Rating.Safe) return "rating:s";
+                return maxRating == Rating.Questionable ? "-rating:e" : "";
             }
         }
 
@@ -247,8 +267,10 @@ namespace CardboardBox
             {
                 var newRequest = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
                 newRequest.AddArgument("limit", PostRequestPageSize);
-                if (MaxRating == Rating.Safe) newRequest.AddArgument("tag", "rating:s");
-                else if (maxRating == Rating.Questionable) newRequest.AddArgument("tag", "-rating:e");
+
+                String rating = MaxComplement;
+                if (MaxComplement != String.Empty)
+                    newRequest.AddArgument("tags", rating);
 
                 Int32 page = ((NewPosts.Count + tuples.Count) * 3) / PostRequestPageSize + 1;
 
@@ -272,15 +294,87 @@ namespace CardboardBox
                     continue;
                 }
 
-                foreach (var p in newPosts)
-                   p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
+                newPosts = newPosts.PadEnd(NumericOps.Align(newPosts.Length, 3), null);
 
-                for (int j = 0; j < newPosts.Length; j += 3)
-                    tuples.Add(new PostTuple {First = newPosts[j], Second = newPosts[j + 1], Third = newPosts[j + 2]});
+                foreach (var p in newPosts)
+                    if (p != null) p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
+
+                for (int j = 0; j < newPosts.Length - 2; j += 3)
+                    tuples.Add(new PostTuple { First = newPosts[j], Second = newPosts[j + 1], Third = newPosts[j + 2] });
+
+                if (newPosts.Length < PostRequestPageSize) break;
             }
 
 
             Logging.D("More new posts loaded!");
+            return tuples.ToArray();
+        }
+
+        /// <summary>
+        /// Searches for the specified tag combination.
+        /// </summary>
+        /// <param name="startPage"></param>
+        /// <param name="pages"></param>
+        /// <param name="tags"></param>
+        /// <returns></returns>
+        internal PostTuple[] ExecutePostQuery(Int32 startPage, Int32 pages, params String[] tags)
+        {
+            // Check for user level enforcement
+            Int32 tagCount = tags.Length;
+            if (MaxComplement != String.Empty) tagCount++;
+
+            if (tagCount > userLevels[User.Level].TagLimit)
+                throw new UnauthorizedAccessException(String.Format("Attempt to search for {0} tags while the user level only permits {1}.", tagCount, userLevels[User.Level].TagLimit));
+            
+            // Get Stuff
+            Logging.D("Executing a query: page={0}, count={1}, tag_count={2}", startPage, pages, tags.Length);
+            List<PostTuple> tuples = new List<PostTuple>();
+            Int32 retry = 0;
+            for (int i = startPage; i < startPage + pages; i++)
+            {
+                var request = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
+                request.AddArgument("limit", PostRequestPageSize);
+
+                String rating = MaxComplement;
+                if (tags.Any(t => t.StartsWith("rating:", StringComparison.CurrentCultureIgnoreCase)))
+                    rating = String.Empty;
+                String tag = rating;
+               if (tags.Length != 0)  tag += "+" + String.Join("+", tags);
+
+                request.AddArgument("tags", tag);
+
+                Logging.D("Query: {0}", tag);
+
+                request.AddArgument("page", i);
+                request.ExecuteRequest(Cookie);
+                while (request.Status == -1) Thread.Sleep(20);  // wait
+
+                Post[] posts = request.Result;
+
+                if (request.Status != 200)
+                {
+                    Logging.D("ERROR: Failed to execute query, HTTP Status = {0}, {1} retries left", request.Status, retry);
+                    i--;
+                    retry++;
+                    if (retry >= 3)
+                    {
+                        Logging.D("ERROR: Failed to execute query and retries have been used up, abort!");
+                        return tuples.ToArray();
+                    }
+                    continue;
+                }
+
+                posts = posts.PadEnd(NumericOps.Align(posts.Length, 3), null);
+
+                foreach (var p in posts)
+                    if (p != null) p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
+
+                for (int j = 0; j < posts.Length - 2; j += 3)
+                    tuples.Add(new PostTuple { First = posts[j], Second = posts[j + 1], Third = posts[j + 2] });
+
+                if (posts.Length < PostRequestPageSize) break;
+            }
+
             return tuples.ToArray();
         }
 

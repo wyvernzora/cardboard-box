@@ -29,7 +29,7 @@ namespace CardboardBox
     {
         #region Constants
 
-        private const Int32 PostPageLoadingThreshold = 240;
+        private const Int32 PostPageLoadingThreshold = 60;
 
         private const Int32 PostPageSize = 10; // Rows
 
@@ -39,6 +39,7 @@ namespace CardboardBox
 
         private ScrollViewMonitor newPostListMonitor;
         private Boolean newPostsLoading;
+        private Boolean reachedEnd = false;
 
         #endregion
 
@@ -143,7 +144,8 @@ namespace CardboardBox
                             return;
                     }
 
-                    NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
+                    if (Session.Instance.Selected != null)
+                        NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
                 };
         }
 
@@ -152,11 +154,23 @@ namespace CardboardBox
             if (newPostsLoading)
                 return;
 
+            if (reachedEnd)
+            {
+                Logging.D("Cannot load more new posts: end of feed.");
+                return;
+            }
+
             newPostsLoading = true;
 
             ThreadPool.QueueUserWorkItem(@a =>
                 {
                     PostTuple[] tuples = Session.Instance.GetMoreNewPosts(1);
+
+                    if (tuples.Length < Session.PostRequestTupleSize)
+                    {
+                        Logging.D("New post feed reached the end!");
+                        reachedEnd = true;
+                    }
 
                     Dispatcher.BeginInvoke(() =>
                         {
@@ -171,9 +185,7 @@ namespace CardboardBox
         }
 
         #endregion
-
-
-
+        
         private void AttachAppBarHandlers()
         {
             // Attach App Bar Commands

@@ -26,7 +26,7 @@
     <ValidateXaml>true</ValidateXaml>
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
     <Utf8Output>true</Utf8Output>
-    <ExpressionBlendVersion>4.0.30816.0</ExpressionBlendVersion>
+    <ExpressionBlendVersion>5.0.31017.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +70,9 @@
     <Compile Include="Logging.cs" />
     <Compile Include="MemoryDiagnosticsHelper.cs" />
     <Compile Include="Nerwork\FileDownloader.cs" />
+    <Compile Include="UI\PostTrio.xaml.cs">
+      <DependentUpon>PostTrio.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\PostTuple.cs" />
     <Compile Include="UI\PostViewerTemplate.cs" />
     <Compile Include="Session.cs" />
@@ -106,6 +109,10 @@
     <Page Include="LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\PostTrio.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ViewPost.xaml">
       <SubType>Designer</SubType>
