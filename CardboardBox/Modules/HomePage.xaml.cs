@@ -100,12 +100,16 @@ namespace CardboardBox
 
                     // Attach Scroll Monitors
                     newPostListMonitor = new ScrollViewMonitor(NewPostList);
-
                     newPostListMonitor.Scroll += (@o, a) =>
                         {
                             if (a.OffsetY > a.MaxY - PostPageLoadingThreshold)
                                 LoadNextNewPostPage();
                         };
+
+                    // Add AppBar Button
+                    if (ApplicationBar.Buttons.Count == 0)
+                        UpdateAppBarButtons();
+                        
                 };
         }
 
@@ -186,41 +190,40 @@ namespace CardboardBox
             // Attach App Bar Commands
             ((ApplicationBarMenuItem) ApplicationBar.MenuItems[1]).Click += (@s, e) => Session.Instance.LogOut();
 
-            Panorama.SelectionChanged += (@s, e) =>
-                {
-                    ApplicationBar.Buttons.Clear();
-
-                    switch (Panorama.SelectedIndex)
-                    {
-                        case 0:
-                            ApplicationBar.Mode = ApplicationBarMode.Default;
-                            foreach (var v in whatsNewAppbarButtons)
-                                ApplicationBar.Buttons.Add(v);
-                            break;
-                        case 1:
-                            ApplicationBar.Mode = ApplicationBarMode.Minimized;
-                            foreach (var v in favoriteAppbarButtons)
-                                ApplicationBar.Buttons.Add(v);
-                            break;
-                        case 2:
-                            ApplicationBar.Mode = ApplicationBarMode.Default;
-                            foreach (var v in subscriptionAppbarButtons)
-                                ApplicationBar.Buttons.Add(v);
-                            break;
-                        case 3:
-                            ApplicationBar.Mode = ApplicationBarMode.Default;
-                            foreach (var v in profileAppbarButtons)
-                                ApplicationBar.Buttons.Add(v);
-                            break;  
-                    }
-                };
+            Panorama.SelectionChanged += (@s, e) => UpdateAppBarButtons();
 
             // Whats New App Bar Buttons
-            whatsNewAppbarButtons[0].Click += (@s, e) =>
-                { // Search
-                    Session.Instance.Navigate(new Uri("/Modules/SearchPage.xaml", UriKind.Relative));
-                };
+            whatsNewAppbarButtons[0].Click += (@s, e) => Session.Instance.Navigate(new Uri("/Modules/SearchPage.xaml", UriKind.Relative));
 
+        }
+
+        private void UpdateAppBarButtons()
+        {
+            ApplicationBar.Buttons.Clear();
+
+            switch (Panorama.SelectedIndex)
+            {
+                case 0:
+                    ApplicationBar.Mode = ApplicationBarMode.Default;
+                    foreach (var v in whatsNewAppbarButtons)
+                        ApplicationBar.Buttons.Add(v);
+                    break;
+                case 1:
+                    ApplicationBar.Mode = ApplicationBarMode.Minimized;
+                    foreach (var v in favoriteAppbarButtons)
+                        ApplicationBar.Buttons.Add(v);
+                    break;
+                case 2:
+                    ApplicationBar.Mode = ApplicationBarMode.Default;
+                    foreach (var v in subscriptionAppbarButtons)
+                        ApplicationBar.Buttons.Add(v);
+                    break;
+                case 3:
+                    ApplicationBar.Mode = ApplicationBarMode.Default;
+                    foreach (var v in profileAppbarButtons)
+                        ApplicationBar.Buttons.Add(v);
+                    break;
+            }
         }
 
 

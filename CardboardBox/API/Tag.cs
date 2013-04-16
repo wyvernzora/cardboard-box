@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// CardboardBox/DanbooruV1DateTimeParser.cs
+// CardboardBox/Tag.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -24,38 +24,26 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
-using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 
-namespace libDanbooru2
+namespace CardboardBox.API
 {
-    /// <summary>
-    ///     DateTime parser for Danbooru API version 1.
-    /// </summary>
-    public class DanbooruV1DateTimeParser : IDateTimeParser
+    [DataContract(Name = "tag")]
+    public class Tag
     {
-        private const String REGEX =
-            "(?<yr>[0-9]{4})-(?<mo>[0-9]{2})-(?<dy>[0-9]{2}) (?<hr>[0-9]{2}):(?<min>[0-9]{2})(|:(?<sec>[0-9]{2}))";
+        [DataMember(Name = "id")]
+        public Int32 ID { get; set; }
 
-        public DateTime Parse(string str)
-        {
-            Match m = Regex.Match(str, REGEX);
-            if (!m.Success) throw new Exception();
+        [DataMember(Name = "type")]
+        public Int32 Type { get; set; }
 
-            Int32 yr = Int32.Parse(m.Result("${yr}"));
-            Int32 mo = Int32.Parse(m.Result("${mo}"));
-            Int32 dy = Int32.Parse(m.Result("${dy}"));
-            Int32 hr = Int32.Parse(m.Result("${hr}"));
-            Int32 min = Int32.Parse(m.Result("${min}"));
+        [DataMember(Name = "count")]
+        public Int32 Count { get; set; }
 
-            String strsec = m.Result("${sec}");
-            Int32 sec = String.IsNullOrEmpty(strsec) ? 0 : Int32.Parse(m.Result("${sec}"));
+        [DataMember(Name = "name")]
+        public String Name { get; set; }
 
-            return new DateTime(yr, mo, dy, hr, min, sec);
-        }
-
-        public string ToString(DateTime dt)
-        {
-            throw new NotSupportedException();
-        }
+        [DataMember(Name = "ambiguous")]
+        public Boolean Ambiguous { get; set; }
     }
 }

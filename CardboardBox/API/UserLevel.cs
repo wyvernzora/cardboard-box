@@ -1,9 +1,9 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Korobka/IDateTimeParser.cs
+// CardboardBox/UserLevel.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
-// This file is a part of Korobka.
+// This file is a part of CardboardBox.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal 
@@ -25,22 +25,46 @@
 
 using System;
 
-namespace libDanbooru2
+namespace CardboardBox.API
 {
     /// <summary>
-    ///     Exposes methods to parse string into DateTime objects and
-    ///     to convert DateTime into string.
+    ///     Represents user level and permissions.
     /// </summary>
-    public interface IDateTimeParser
+    public sealed class UserLevel
     {
         /// <summary>
-        ///     When implemented, parses string into DateTime object.
+        ///     Constructor.
+        ///     Initializes a new instance.
         /// </summary>
-        DateTime Parse(String str);
+        /// <param name="level">
+        ///     <see cref="Level" />
+        /// </param>
+        /// <param name="name">
+        ///     <see cref="Name" />
+        /// </param>
+        /// <param name="tagLimit">
+        ///     <see cref="TagLimit" />
+        /// </param>
+        public UserLevel(Int32 level, String name, Int32 tagLimit)
+        {
+            Level = level;
+            Name = name;
+            TagLimit = tagLimit;
+        }
 
         /// <summary>
-        ///     When implemented, converts DayTime into string.
+        ///     Gets the numeric representation of the level.
         /// </summary>
-        String ToString(DateTime dt);
+        public Int32 Level { get; private set; }
+
+        /// <summary>
+        ///     Gets the human readable description of the level.
+        /// </summary>
+        public String Name { get; private set; }
+
+        /// <summary>
+        ///     Gets the maximum number of tags this level permits.
+        /// </summary>
+        public Int32 TagLimit { get; private set; }
     }
 }

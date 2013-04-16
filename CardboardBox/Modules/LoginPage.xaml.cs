@@ -29,6 +29,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
+using CardboardBox.API;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
 using libDanbooru2;

@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// CardboardBox/UserLevel.cs
+// CardboardBox/DanbooruV1DateTimeParser.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -24,47 +24,39 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
+using System.Text.RegularExpressions;
+using libDanbooru2;
 
-namespace libDanbooru2
+namespace CardboardBox.API
 {
     /// <summary>
-    ///     Represents user level and permissions.
+    ///     DateTime parser for Danbooru API version 1.
     /// </summary>
-    public sealed class UserLevel
+    public class DanbooruV1DateTimeParser : IDateTimeParser
     {
-        /// <summary>
-        ///     Constructor.
-        ///     Initializes a new instance.
-        /// </summary>
-        /// <param name="level">
-        ///     <see cref="Level" />
-        /// </param>
-        /// <param name="name">
-        ///     <see cref="Name" />
-        /// </param>
-        /// <param name="tagLimit">
-        ///     <see cref="TagLimit" />
-        /// </param>
-        public UserLevel(Int32 level, String name, Int32 tagLimit)
+        private const String REGEX =
+            "(?<yr>[0-9]{4})-(?<mo>[0-9]{2})-(?<dy>[0-9]{2}) (?<hr>[0-9]{2}):(?<min>[0-9]{2})(|:(?<sec>[0-9]{2}))";
+
+        public DateTime Parse(string str)
         {
-            Level = level;
-            Name = name;
-            TagLimit = tagLimit;
+            Match m = Regex.Match(str, REGEX);
+            if (!m.Success) throw new Exception();
+
+            Int32 yr = Int32.Parse(m.Result("${yr}"));
+            Int32 mo = Int32.Parse(m.Result("${mo}"));
+            Int32 dy = Int32.Parse(m.Result("${dy}"));
+            Int32 hr = Int32.Parse(m.Result("${hr}"));
+            Int32 min = Int32.Parse(m.Result("${min}"));
+
+            String strsec = m.Result("${sec}");
+            Int32 sec = String.IsNullOrEmpty(strsec) ? 0 : Int32.Parse(m.Result("${sec}"));
+
+            return new DateTime(yr, mo, dy, hr, min, sec);
         }
 
-        /// <summary>
-        ///     Gets the numeric representation of the level.
-        /// </summary>
-        public Int32 Level { get; private set; }
-
-        /// <summary>
-        ///     Gets the human readable description of the level.
-        /// </summary>
-        public String Name { get; private set; }
-
-        /// <summary>
-        ///     Gets the maximum number of tags this level permits.
-        /// </summary>
-        public Int32 TagLimit { get; private set; }
+        public string ToString(DateTime dt)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// CardboardBox/Tag.cs
+// CardboardBox/IDateTimeParser.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -24,26 +24,23 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
-using System.Runtime.Serialization;
 
-namespace libDanbooru2
+namespace CardboardBox.API
 {
-    [DataContract(Name = "tag")]
-    public class Tag
+    /// <summary>
+    ///     Exposes methods to parse string into DateTime objects and
+    ///     to convert DateTime into string.
+    /// </summary>
+    public interface IDateTimeParser
     {
-        [DataMember(Name = "id")]
-        public Int32 ID { get; set; }
+        /// <summary>
+        ///     When implemented, parses string into DateTime object.
+        /// </summary>
+        DateTime Parse(String str);
 
-        [DataMember(Name = "type")]
-        public Int32 Type { get; set; }
-
-        [DataMember(Name = "count")]
-        public Int32 Count { get; set; }
-
-        [DataMember(Name = "name")]
-        public String Name { get; set; }
-
-        [DataMember(Name = "ambiguous")]
-        public Boolean Ambiguous { get; set; }
+        /// <summary>
+        ///     When implemented, converts DayTime into string.
+        /// </summary>
+        String ToString(DateTime dt);
     }
 }

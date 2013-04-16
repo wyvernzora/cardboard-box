@@ -63,6 +63,8 @@
       <HintPath>..\packages\SilverlightToolkitWP.4.2012.6.25\lib\sl4-windowsphone71\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Phone.Interop" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Servicemodel.Web" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -71,6 +73,16 @@
     <Reference Include="mscorlib.extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\Comment.cs" />
+    <Compile Include="API\DanbooruCredentials.cs" />
+    <Compile Include="API\DanbooruRequest.cs" />
+    <Compile Include="API\DanbooruV1DateTimeParser.cs" />
+    <Compile Include="API\IDateTimeParser.cs" />
+    <Compile Include="API\Post.cs" />
+    <Compile Include="API\Rating.cs" />
+    <Compile Include="API\Tag.cs" />
+    <Compile Include="API\User.cs" />
+    <Compile Include="API\UserLevel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -166,12 +178,6 @@
     <Content Include="Assets\Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\libDanbooru2\libDanbooru2.csproj">
-      <Project>{DCAA7514-5234-4E37-ACA8-073A48B6BBC0}</Project>
-      <Name>libDanbooru2</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\banner-dark.png" />

@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace libDanbooru2
+namespace CardboardBox.API
 {
     [DataContract]
     public class Comment

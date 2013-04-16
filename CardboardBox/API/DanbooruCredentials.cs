@@ -27,9 +27,10 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using libDanbooru2;
 using libWyvernzora.Core;
 
-namespace libDanbooru2
+namespace CardboardBox.API
 {
     /// <summary>
     ///     Danbooru Credentials
@@ -45,7 +46,6 @@ namespace libDanbooru2
         /// </summary>
         public DanbooruCredentials()
         {
-            
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace libDanbooru2
             hash = String.Join(String.Empty,
                                from b in
                                    hasher.ComputeHash(
-                                       Encoding.UTF8.GetBytes(String.Format(Constants.SaltString, password)))
+                                       Encoding.UTF8.GetBytes(String.Format(Session.SaltString, password)))
                                select DirectIntConv.ToHexString(b, 2).ToLower());
         }
 
@@ -81,9 +81,9 @@ namespace libDanbooru2
         {
             get { return hash; }
         }
-  
+
         /// <summary>
-        /// Creates a DanbooruCredentials instance from already hashed password.
+        ///     Creates a DanbooruCredentials instance from already hashed password.
         /// </summary>
         /// <param name="username">Username.</param>
         /// <param name="phash">SHA1 hashed salted password.</param>

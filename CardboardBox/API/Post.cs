@@ -24,11 +24,10 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Windows.Media.Imaging;
+using libDanbooru2;
 
-namespace libDanbooru2
+namespace CardboardBox.API
 {
     [DataContract(Name = "post")]
     public class Post
@@ -43,7 +42,7 @@ namespace libDanbooru2
         public Boolean HasChildren { get; set; }
 
 
-        [DataMember(Name = "rating")] 
+        [DataMember(Name = "rating")]
         public String RatingString { get; set; }
 
         [IgnoreDataMember]
@@ -52,7 +51,6 @@ namespace libDanbooru2
             get { return RatingEx.Parse(RatingString); }
             set { RatingString = value.ToString().Substring(0, 1).ToLower(); }
         }
-
 
 
         [DataMember(Name = "uploader_name")]

@@ -34,6 +34,7 @@ using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using CardboardBox.API;
 using CardboardBox.UI;
 using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
@@ -81,6 +82,10 @@ namespace CardboardBox
 
         public const Int32 PostRequestTupleSize = 20;
 
+        public const String UserAgentString =
+            "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31";
+
+        public const String SaltString = "choujin-steiner--{0}--";
 // ReSharper restore InconsistentNaming
 
         #endregion
@@ -125,7 +130,7 @@ namespace CardboardBox
         }
 
         private readonly IsolatedStorageSettings settings;
-        private readonly Dictionary<Int32, UserLevel> userLevels;
+        private readonly Dictionary<int, UserLevel> userLevels;
 
         /// <summary>
         /// Gets the IsolatedStorage instance for the application.

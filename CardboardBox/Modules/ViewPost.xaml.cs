@@ -16,6 +16,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 using System.Windows.Shapes;
+using CardboardBox.API;
 using CardboardBox.UI;
 using Microsoft.Phone.Controls;
 using libDanbooru2;
@@ -421,6 +422,12 @@ namespace CardboardBox
             PivotRoot.Title = "VIEWING POST #" + p.ID.ToString(CultureInfo.InvariantCulture);
 
             // Load up the image tags
+
+            CopyrightTagPanel.Children.Clear();
+            CharacterTagPanel.Children.Clear();
+            ArtistTagPanel.Children.Clear();
+            GeneralTagPanel.Children.Clear();
+
             #region Load Tags and related UI code
 
 

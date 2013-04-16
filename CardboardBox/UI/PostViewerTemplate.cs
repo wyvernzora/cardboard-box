@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Resources;
+using CardboardBox.API;
 using libDanbooru2;
 
 namespace CardboardBox
