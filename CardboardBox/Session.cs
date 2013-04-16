@@ -25,7 +25,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.IsolatedStorage;
@@ -33,7 +32,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows;
-using System.Windows.Input;
 using CardboardBox.API;
 using CardboardBox.UI;
 using CardboardBox.Utilities;
@@ -148,6 +146,11 @@ namespace CardboardBox
         public User User { get; private set; }
 
         /// <summary>
+        ///     Gets the current user level and limits.
+        /// </summary>
+        public UserLevel Level { get { return userLevels[User.Level]; }}
+
+        /// <summary>
         /// Gets the post viewer template generator for the session.
         /// </summary>
         public PostViewerTemplate PostViewerTemplate { get; private set; }
@@ -234,7 +237,7 @@ namespace CardboardBox
                 while (phoneApplicationFrame.BackStack.Any())
                     phoneApplicationFrame.RemoveBackEntry();
             else
-                throw new Exception("Navigation Error!");
+                throw new Exception("Error!");
         }
 
         /// <summary>
@@ -265,7 +268,7 @@ namespace CardboardBox
             settings.Remove("hash");
 
             // Go Back to Login
-            Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+            Navigate(new Uri("/Modules/LoginPage.xaml", UriKind.Relative));
         }
 
         /// <summary>
@@ -276,7 +279,7 @@ namespace CardboardBox
             ClearBackStack();
             instance = null;
             // Go Back to Login
-            Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+            Navigate(new Uri("/Modules/LoginPage.xaml", UriKind.Relative));
         }
 
         /// <summary>
@@ -365,7 +368,7 @@ namespace CardboardBox
                 if (tags.Any(t => t.StartsWith("rating:", StringComparison.CurrentCultureIgnoreCase)))
                     rating = String.Empty;
                 String tag = rating;
-               if (tags.Length != 0)  tag += "+" + String.Join("+", tags);
+                if (tags.Length != 0)  tag += "+" + String.Join("+", tags);
 
                 request.AddArgument("tags", tag);
 

@@ -29,8 +29,6 @@ namespace CardboardBox
 
         private const Int32 PostPageLoadingThreshold = 60;
 
-        private const Int32 PostPageSize = 10; // Rows
-
         #endregion
 
         #region ListBox Monitors

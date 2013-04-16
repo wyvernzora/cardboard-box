@@ -14,6 +14,8 @@ using Microsoft.Phone.Info;
 using System.Diagnostics;
 using System.Collections.Generic;
 
+// TODO Delete for RELEASE build
+
 namespace MemoryDiagnostics
 {
   /// <summary>
@@ -21,15 +23,16 @@ namespace MemoryDiagnostics
   /// </summary>
   public static class MemoryDiagnosticsHelper
   {
+    const long MaxMemory = 90 * 1024 * 1024; // 90MB, per marketplace
+    const long MaxCheckpoints = 10; // adjust as needed
+
     static Popup popup;
     static TextBlock currentMemoryBlock;
     static TextBlock peakMemoryBlock;
     static DispatcherTimer timer;
     static bool forceGc;
-    const long MAX_MEMORY = 90 * 1024 * 1024; // 90MB, per marketplace
     static int lastSafetyBand = -1; // to avoid needless changes of colour
 
-    const long MAX_CHECKPOINTS = 10; // adjust as needed
     static Queue<MemoryCheckpoint> recentCheckpoints;
 
     static bool alreadyFailedPeak = false; // to avoid endless Asserts
@@ -73,7 +76,7 @@ namespace MemoryDiagnostics
       if (recentCheckpoints == null)
         return;
 
-      if (recentCheckpoints.Count >= MAX_CHECKPOINTS - 1)
+      if (recentCheckpoints.Count >= MaxCheckpoints - 1)
         recentCheckpoints.Dequeue();
 
       recentCheckpoints.Enqueue(new MemoryCheckpoint(text, GetCurrentMemoryUsage()));
@@ -161,7 +164,7 @@ namespace MemoryDiagnostics
         return;
 
       long peak = GetPeakMemoryUsage();
-      if (peak >= MAX_MEMORY)
+      if (peak >= MaxMemory)
       {
         alreadyFailedPeak = true;
         Checkpoint("*MEMORY USAGE FAIL*");
@@ -201,7 +204,7 @@ namespace MemoryDiagnostics
 
     private static int GetSafetyBand(long mem)
     {
-      double percent = (double)mem / (double)MAX_MEMORY;
+      double percent = (double)mem / (double)MaxMemory;
       if (percent <= 0.75)
         return 0;
 

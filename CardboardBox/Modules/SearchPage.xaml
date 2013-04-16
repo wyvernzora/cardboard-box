@@ -16,28 +16,87 @@
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
+    	<VisualStateManager.VisualStateGroups>
+    		<VisualStateGroup x:Name="SearchMessageStates">
+    			<VisualState x:Name="SearchValid"/>
+    			<VisualState x:Name="TagOverflow">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(TextBlock.Foreground)" Storyboard.TargetName="SearchMessage">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<SolidColorBrush Color="#BAFF2424"/>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
+    		</VisualStateGroup>
+    		<VisualStateGroup x:Name="LoadingStates">
+    			<VisualStateGroup.Transitions>
+    				<VisualTransition GeneratedDuration="0:0:1"/>
+    			</VisualStateGroup.Transitions>
+    			<VisualState x:Name="DataLoading">
+    				<Storyboard>
+    					<ColorAnimation Duration="0" To="#CD000000" Storyboard.TargetProperty="(Control.Background).(SolidColorBrush.Color)" Storyboard.TargetName="SearchBox" d:IsOptimized="True"/>
+    				</Storyboard>
+    			</VisualState>
+    			<VisualState x:Name="DataLoaded"/>
+    		</VisualStateGroup>
+    	</VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel Grid.Row="0" Margin="0,0,0,8">
-			
-
-
-        	<toolkit:PhoneTextBox Margin="12,0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="3" 
-			ActionIcon="/Assets/SDK/search-action.png" Hint="Search"
-			InputScope="Search" Height="80" MaxHeight="80"/>
-        	<TextBlock x:Name="SearchMessage" HorizontalAlignment="Left" TextWrapping="Wrap" Text="You can only search for 2 tags at once." VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}" FontFamily="{StaticResource PhoneFontFamilySemiLight}" Foreground="{StaticResource PhoneDisabledBrush}" Margin="24,0,0,0"/>
-        </StackPanel>
-
-        <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+        <Grid HorizontalAlignment="Left" Height="111" VerticalAlignment="Top" Width="480">
+        	<Grid.ColumnDefinitions>
+        		<ColumnDefinition Width="13*"/>
+        		<ColumnDefinition Width="35*"/>
+        	</Grid.ColumnDefinitions>
         	<Grid.RowDefinitions>
         		<RowDefinition Height="Auto"/>
         		<RowDefinition/>
         	</Grid.RowDefinitions>
+        	<toolkit:PhoneTextBox x:Name="SearchBox" Margin="12,0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="3" 
+        		ActionIcon="/Assets/SDK/search-action.png" Hint="Search"
+        		InputScope="Search" Height="80" MaxHeight="80" Grid.ColumnSpan="2"/>
+        	<TextBlock x:Name="SearchMessage" HorizontalAlignment="Right" TextWrapping="Wrap" Text="0 / 2 Tags" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}" FontFamily="{StaticResource PhoneFontFamilySemiLight}" Foreground="{StaticResource PhoneSubtleBrush}" Margin="0,0,23,0" Grid.Row="1" Grid.Column="1"/>
+        	<Image HorizontalAlignment="Left" Margin="24,-3,0,0" Grid.Row="1" VerticalAlignment="Top" Source="/Assets/application-banner-small-light.png" Height="30"/>
+        </Grid>
+
+        <!--TitlePanel contains the name of the application and page title-->
+
+        <!--ContentPanel - place additional content here-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,12,12,0">
+        	<Grid.RowDefinitions>
+        		<RowDefinition Height="Auto"/>
+        		<RowDefinition/>
+        	</Grid.RowDefinitions>
+        	<toolkit:LongListSelector x:Name="SearchResultList" Grid.RowSpan="2"
+					IsFlatList="True">
+        		
+										<toolkit:LongListSelector.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<Border Height="125" 
+										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
+										<Image Source="{Binding First.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=First}"  />
+									</Border>
+									<Border Height="125" 
+										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
+										<Image Source="{Binding Second.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=Second}" />
+									</Border>
+									<Border Height="125" 
+										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
+										<Image Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=Third}" />
+									</Border>
+								</StackPanel>
+								<!--<local:PostTrio Tuple="{Binding}"/>-->
+							</DataTemplate>
+						</toolkit:LongListSelector.ItemTemplate>
+
+			</toolkit:LongListSelector>
 			
 
 

@@ -146,6 +146,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\home-page-header.png" />
+    <Content Include="Assets\application-banner-small-dark.png" />
+    <Content Include="Assets\application-banner-small-light.png" />
     <Content Include="Assets\banner-dark-alt.png" />
     <Content Include="Assets\banner-light-alt.png" />
     <Content Include="Assets\SDK\add.png" />
@@ -169,6 +171,7 @@
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
+    <Resource Include="Modules\application-banner-small-light.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\ApplicationIcon.png">
@@ -182,9 +185,7 @@
   <ItemGroup>
     <Content Include="Assets\banner-dark.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataContracts\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
