@@ -50,6 +50,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="libWyvernzora.WindowsPhone, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\libWyvernzora.WindowsPhone.dll</HintPath>
+    </Reference>
+    <Reference Include="libWyvernzora.WindowsPhone.BarlogX">
+      <HintPath>..\Libraries\libWyvernzora.WindowsPhone.BarlogX.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Phone.Controls.Toolkit">
@@ -67,13 +74,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Logging.cs" />
-    <Compile Include="MemoryDiagnosticsHelper.cs" />
-    <Compile Include="Nerwork\FileDownloader.cs" />
-    <Compile Include="SearchPage.xaml.cs">
+    <Compile Include="Diagnostics\Logging.cs" />
+    <Compile Include="Diagnostics\MemoryDiagnosticsHelper.cs" />
+    <Compile Include="Modules\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SettingsPage.xaml.cs">
+    <Compile Include="Modules\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\PostTrio.xaml.cs">
@@ -82,24 +88,17 @@
     <Compile Include="UI\PostTuple.cs" />
     <Compile Include="UI\PostViewerTemplate.cs" />
     <Compile Include="Session.cs" />
-    <Compile Include="HomePage.xaml.cs">
+    <Compile Include="Modules\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LoginPage.xaml.cs">
+    <Compile Include="Modules\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Barlox\BarloxAnimation.cs" />
-    <Compile Include="UI\Barlox\BarloxEnums.cs" />
-    <Compile Include="UI\Barlox\BarloxEvent.cs" />
-    <Compile Include="UI\Barlox\BarloxEventAction.cs" />
-    <Compile Include="UI\Barlox\BarloxFrame.cs" />
-    <Compile Include="UI\Barlox\BarloxState.cs" />
     <Compile Include="UI\ScrollViewMonitor.cs" />
-    <Compile Include="Utilities\ActionCommand.cs" />
     <Compile Include="Utilities\DependencyPropertyListener.cs" />
     <Compile Include="Utilities\PostTupleCollection.cs" />
-    <Compile Include="ViewPost.xaml.cs">
+    <Compile Include="Modules\ViewPost.xaml.cs">
       <DependentUpon>ViewPost.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -108,19 +107,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="HomePage.xaml">
+    <Page Include="Modules\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LoginPage.xaml">
+    <Page Include="Modules\LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SearchPage.xaml">
+    <Page Include="Modules\SearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SettingsPage.xaml">
+    <Page Include="Modules\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -128,7 +127,7 @@
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ViewPost.xaml">
+    <Page Include="Modules\ViewPost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -158,14 +157,13 @@
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
-    <Resource Include="basecircle.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApplicationIcon.png">
+    <Content Include="Assets\ApplicationIcon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\banner-light.png" />
-    <Content Include="Background.png">
+    <Content Include="Assets\Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -179,8 +177,7 @@
     <Content Include="Assets\banner-dark.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="IO\" />
-    <Folder Include="ViewModel\" />
+    <Folder Include="DataContracts\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

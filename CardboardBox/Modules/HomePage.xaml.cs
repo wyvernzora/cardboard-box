@@ -14,13 +14,11 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using CardboardBox.Nerwork;
 using CardboardBox.UI;
 using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using libDanbooru2;
-using libDanbooru2.Utilities;
 using libWyvernzora.Utilities;
 
 namespace CardboardBox
@@ -142,7 +140,7 @@ namespace CardboardBox
                     }
 
                     if (Session.Instance.Selected != null)
-                        NavigationService.Navigate(new Uri("/ViewPost.xaml", UriKind.Relative));
+                        NavigationService.Navigate(new Uri("/Modules/ViewPost.xaml", UriKind.Relative));
                 };
         }
 
@@ -220,7 +218,7 @@ namespace CardboardBox
             // Whats New App Bar Buttons
             whatsNewAppbarButtons[0].Click += (@s, e) =>
                 { // Search
-                    Session.Instance.Navigate(new Uri("/SearchPage.xaml", UriKind.Relative));
+                    Session.Instance.Navigate(new Uri("/Modules/SearchPage.xaml", UriKind.Relative));
                 };
 
         }

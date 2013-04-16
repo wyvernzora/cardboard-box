@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libDanbooru2.Sandbox", "lib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardboardBox", "CardboardBox\CardboardBox.csproj", "{AB90B90C-4484-400F-90C7-5F9019153ECE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{D64B5C98-8037-4A79-965A-DF0EF69708A1}"
+	ProjectSection(SolutionItems) = preProject
+		Libraries\libWyvernzora.WindowsPhone.BarlogX.dll = Libraries\libWyvernzora.WindowsPhone.BarlogX.dll
+		CardboardBox\Libraries\libWyvernzora.WindowsPhone.dll = CardboardBox\Libraries\libWyvernzora.WindowsPhone.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

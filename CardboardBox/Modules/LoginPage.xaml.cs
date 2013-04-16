@@ -142,7 +142,7 @@ namespace CardboardBox
                             () =>
                                 {
                                     Session.Instance.ConfirmUserLogin();
-                                    NavigationService.Navigate(new Uri("/HomePage.xaml", UriKind.Relative));
+                                    NavigationService.Navigate(new Uri("/Modules/HomePage.xaml", UriKind.Relative));
                                 }
                             );
 
