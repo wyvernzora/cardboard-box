@@ -70,6 +70,12 @@
     <Compile Include="Logging.cs" />
     <Compile Include="MemoryDiagnosticsHelper.cs" />
     <Compile Include="Nerwork\FileDownloader.cs" />
+    <Compile Include="SearchPage.xaml.cs">
+      <DependentUpon>SearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\PostTrio.xaml.cs">
       <DependentUpon>PostTrio.xaml</DependentUpon>
     </Compile>
@@ -110,6 +116,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SearchPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\PostTrio.xaml">
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
@@ -123,6 +137,7 @@
     <Resource Include="Assets\home-page-header.png" />
     <Content Include="Assets\banner-dark-alt.png" />
     <Content Include="Assets\banner-light-alt.png" />
+    <Content Include="Assets\SDK\add.png" />
     <Content Include="Assets\SDK\download.png" />
     <Content Include="Assets\SDK\edit.png" />
     <Content Include="Assets\SDK\favs.addto.png" />
@@ -131,6 +146,7 @@
     <Content Include="Assets\SDK\feature.settings.png" />
     <Content Include="Assets\SDK\like.png" />
     <Content Include="Assets\SDK\refresh.png" />
+    <Content Include="Assets\SDK\search-action.png" />
     <Content Include="Assets\SDK\share.png" />
     <Content Include="Assets\template.html" />
     <Content Include="SplashScreenImage.jpg" />
@@ -142,6 +158,7 @@
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
+    <Resource Include="basecircle.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplicationIcon.png">

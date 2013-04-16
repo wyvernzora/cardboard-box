@@ -55,6 +55,7 @@ namespace CardboardBox
 
             InitializeComponent();
 
+            ApplicationBar.IsVisible = false;
 
             // Initialize fields
             comments = new ObservableCollection<Comment>();
@@ -114,6 +115,7 @@ namespace CardboardBox
                     if (!p.HasChildren && !p.ParentID.HasValue)
                         PivotRoot.Items.Remove(RelatedPivotItem);
                 };
+            AttachAppBarHandlers();
 
             // Attach Post Bindings
             CommentsList.ItemsSource = comments;
@@ -125,6 +127,7 @@ namespace CardboardBox
                     VisualStateManager.GoToState(this, "Loaded", true);
                     animation.IsEnabled = false;
                     PivotRoot.IsLocked = false;
+                    ApplicationBar.IsVisible = true;
                 };
             PostBrowser.NavigationFailed += (@s, e) =>
                 {
@@ -557,6 +560,18 @@ namespace CardboardBox
                 });
             });
 
+        }
+
+        #endregion
+
+        #region App Bar
+
+        private void AttachAppBarHandlers()
+        {
+            PivotRoot.SelectionChanged += (@s, e) =>
+                {
+                    ApplicationBar.IsVisible = PivotRoot.SelectedIndex == 0;
+                };
         }
 
         #endregion

@@ -222,6 +222,16 @@ namespace CardboardBox
                 throw new Exception("Navigation Error!");
         }
 
+        public void ClearBackStack()
+        {
+            var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
+            if (phoneApplicationFrame != null)
+                while (phoneApplicationFrame.BackStack.Any())
+                    phoneApplicationFrame.RemoveBackEntry();
+            else
+                throw new Exception("Navigation Error!");
+        }
+
         /// <summary>
         /// Confirms that the user successfully logged in.
         /// </summary>
@@ -249,6 +259,17 @@ namespace CardboardBox
             settings.Remove("username");
             settings.Remove("hash");
 
+            // Go Back to Login
+            Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
+        }
+
+        /// <summary>
+        /// Clears and reloads the session.
+        /// </summary>
+        internal void ReloadSession()
+        {
+            ClearBackStack();
+            instance = null;
             // Go Back to Login
             Navigate(new Uri("/LoginPage.xaml", UriKind.Relative));
         }
