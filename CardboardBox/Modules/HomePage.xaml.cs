@@ -141,7 +141,7 @@ namespace CardboardBox
                     }
 
                     if (Session.Instance.Selected != null)
-                        NavigationService.Navigate(new Uri("/Modules/ViewPost.xaml", UriKind.Relative));
+                        Session.Instance.Navigate(new Uri("/Modules/ViewPost.xaml", UriKind.Relative));
                 };
         }
 
@@ -222,8 +222,6 @@ namespace CardboardBox
                     break;
             }
         }
-
-
 
     }
 }

@@ -21,5 +21,5 @@
 										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
 										<Image x:Name="ThirdImage" Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=Third}" />
 									</Border>
-								</StackPanel>
+</StackPanel>
 </UserControl>

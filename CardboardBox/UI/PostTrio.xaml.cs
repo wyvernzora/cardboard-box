@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using CardboardBox.UI;
+using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 
@@ -44,7 +45,8 @@ namespace CardboardBox
 
                 if (value.First != null)
                 {
-                    trio.FirstImage.Source = new BitmapImage(value.First.PreviewUrl);
+                    //trio.FirstImage.Source = new BitmapImage(value.First.PreviewUrl);
+                    LowProfileImageLoader.SetUriSource(trio.FirstImage, value.First.PreviewUrl);
                     trio.FirstBorder.Visibility = Visibility.Visible;
                 }
                 else
@@ -52,7 +54,8 @@ namespace CardboardBox
 
                 if (value.Second != null)
                 {
-                    trio.SecondImage.Source = new BitmapImage(value.Second.PreviewUrl);
+                    //trio.SecondImage.Source = new BitmapImage(value.Second.PreviewUrl);
+                    LowProfileImageLoader.SetUriSource(trio.SecondImage, value.Second.PreviewUrl);
                     trio.SecondBorder.Visibility = Visibility.Visible;
                 }
                 else
@@ -60,7 +63,8 @@ namespace CardboardBox
 
                 if (value.Third != null)
                 {
-                    trio.ThirdImage.Source = new BitmapImage(value.Third.PreviewUrl);
+                    //trio.ThirdImage.Source = new BitmapImage(value.Third.PreviewUrl);
+                    LowProfileImageLoader.SetUriSource(trio.ThirdImage, value.Third.PreviewUrl);
                     trio.ThirdBorder.Visibility = Visibility.Visible;
                 }
                 else

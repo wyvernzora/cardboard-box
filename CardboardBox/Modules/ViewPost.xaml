@@ -18,7 +18,7 @@
     shell:SystemTray.IsVisible="True">
 
 	<phone:PhoneApplicationPage.ApplicationBar>
-		<shell:ApplicationBar IsVisible="false" IsMenuEnabled="true" Mode="Default" Opacity="0.85">
+		<shell:ApplicationBar IsVisible="false" IsMenuEnabled="true" Mode="Minimized" Opacity="0.85">
 			<shell:ApplicationBar.Buttons>
 				<shell:ApplicationBarIconButton IconUri="/Assets/SDK/share.png" Text="share" />
 				<shell:ApplicationBarIconButton IconUri="/Assets/SDK/like.png" Text="favorite" />
@@ -107,7 +107,7 @@
             	<controls3:LongListSelector x:Name="RelatedList" Margin="0" IsFlatList="True">
             		<controls3:LongListSelector.ItemTemplate>
 							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
+								<!--<StackPanel Orientation="Horizontal">
 									<Border Height="125" 
 										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
 										<Image Source="{Binding First.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=First}"  />
@@ -120,8 +120,8 @@
 										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
 										<Image Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=Third}" />
 									</Border>
-								</StackPanel>
-								<!--<local:PostTrio Tuple="{Binding}" />-->
+								</StackPanel>-->
+								<local:PostTrio Tuple="{Binding}" />
 							</DataTemplate>
 						</controls3:LongListSelector.ItemTemplate>
 				</controls3:LongListSelector>

@@ -79,7 +79,7 @@ namespace CardboardBox
             SearchResultList.ItemsSource = SearchResults;
 
             // Load Appropriate Logo
-            String logoUrl = App.IsInDarkTheme() ? "/Assets/banner-dark-alt.png" : "/Assets/banner-light-alt.png";
+            String logoUrl = App.IsInDarkTheme() ? "/Assets/application-banner-small-dark.png" : "/Assets/application-banner-small-light.png";
             var logoSrc = new BitmapImage(new Uri(logoUrl, UriKind.Relative));
             AppLogoImage.Source = logoSrc;
 
@@ -121,10 +121,10 @@ namespace CardboardBox
             }
 
             // Load search results if not already searching
-            String query;
-            if (NavigationContext.QueryString.TryGetValue("query", out query))
+            if (Session.Instance.NavigationArguments != null)
             {
-                query = query.Replace("+", " ");
+                String query = Session.Instance.NavigationArguments.Replace("+", " ");
+                Session.Instance.NavigationArguments = null;
                 SearchBox.Text = query;
                 Focus();
                 ExecuteSearch(query);
@@ -176,7 +176,7 @@ namespace CardboardBox
                     }
 
                     if (Session.Instance.Selected != null)
-                        NavigationService.Navigate(new Uri("/Modules/ViewPost.xaml", UriKind.Relative));
+                        Session.Instance.Navigate(new Uri("/Modules/ViewPost.xaml", UriKind.Relative));
                 };
 
             // Set up ScrollMonitor

@@ -182,6 +182,11 @@ namespace CardboardBox
         /// </summary>
         public String[] Query { get; set; }
 
+        /// <summary>
+        /// Gets or sets arguments for navigation request.
+        /// </summary>
+        public String NavigationArguments { get; set; }
+        
         #endregion
 
         #region User Preferences
@@ -225,11 +230,15 @@ namespace CardboardBox
         /// Navigates to the specified Uri.
         /// </summary>
         /// <param name="uri"></param>
-        public void Navigate(Uri uri)
+        /// <param name="args"></param>
+        public void Navigate(Uri uri, String args = null)
         {
             var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
             if (phoneApplicationFrame != null)
+            {
+                NavigationArguments = args;
                 phoneApplicationFrame.Navigate(uri);
+            }
             else
                 throw new Exception("Navigation Error!");
         }

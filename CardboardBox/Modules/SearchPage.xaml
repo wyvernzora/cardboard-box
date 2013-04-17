@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+	xmlns:local="clr-namespace:CardboardBox"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     x:Class="CardboardBox.SearchPage"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
@@ -104,7 +105,7 @@
         		
 										<toolkit:LongListSelector.ItemTemplate>
 							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
+								<!--<StackPanel Orientation="Horizontal">
 									<Border Height="125" 
 										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
 										<Image Source="{Binding First.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding First}"  />
@@ -117,8 +118,8 @@
 										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
 										<Image Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Third}" />
 									</Border>
-								</StackPanel>
-								<!--<local:PostTrio Tuple="{Binding}"/>-->
+								</StackPanel>-->
+								<local:PostTrio Tuple="{Binding}"/>
 							</DataTemplate>
 						</toolkit:LongListSelector.ItemTemplate>
 

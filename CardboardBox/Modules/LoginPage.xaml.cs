@@ -32,8 +32,10 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 using CardboardBox.API;
+using Microsoft.Phone.Net.NetworkInformation;
 using Microsoft.Phone.Tasks;
 using libWyvernzora.BarlogX.Animation;
+using NetworkInterface = System.Net.NetworkInformation.NetworkInterface;
 
 namespace CardboardBox
 {
@@ -137,6 +139,15 @@ namespace CardboardBox
         /// </summary>
         private void VerifyCredentials()
         {
+            if (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                // No connection
+                TextBlockError.Text = "No internet connection!";
+                VisualStateManager.GoToState(this, "Error", true);
+                TextboxPassword.Password = String.Empty;
+                TextboxPassword.Focus();
+            }
+
             VisualStateManager.GoToState(this, "LoadingData", true);
 
             DanbooruRequest<Post[]> request = new DanbooruRequest<Post[]>(Session.Instance.Credentials,
@@ -154,11 +165,10 @@ namespace CardboardBox
                             () =>
                                 {
                                     Session.Instance.ConfirmUserLogin();
-                                    NavigationService.Navigate(new Uri("/Modules/HomePage.xaml", UriKind.Relative));
+                                    Session.Instance.Navigate(new Uri("/Modules/HomePage.xaml", UriKind.Relative));
                                 }
                             );
 
-                        //NavigationService.Navigate(new Uri("/HomePage.xaml", UriKind.Relative));
                     }
                     else if (request.Status == (int) HttpStatusCode.Forbidden)
                     {

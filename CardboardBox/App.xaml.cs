@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -79,6 +80,8 @@ namespace CardboardBox
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
             Logging.D("Application Activated");
+            if (!NetworkInterface.GetIsNetworkAvailable())
+                Session.Instance.LogOut();
         }
 
         // Code to execute when the application is deactivated (sent to background)
@@ -114,6 +117,7 @@ namespace CardboardBox
 
             Logging.D("ERROR: Crash! ExceptionType = {0}; Message = {1}; StackTrace = {2}",
                       e.ExceptionObject.GetType().FullName, e.ExceptionObject.Message, e.ExceptionObject.StackTrace);
+            MessageBox.Show(String.Format("An exception of type {0} was unhandled in the Opix.", e.ExceptionObject.GetType().Name), "Error", MessageBoxButton.OK);
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger
