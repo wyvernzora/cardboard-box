@@ -34,12 +34,12 @@
     			<VisualStateGroup.Transitions>
     				<VisualTransition GeneratedDuration="0:0:0.5"/>
     			</VisualStateGroup.Transitions>
-    			<VisualState x:Name="Loading">
+    			<VisualState x:Name="DataLoading">
     				<Storyboard>
     					<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="PostBrowser" d:IsOptimized="True"/>
     				</Storyboard>
     			</VisualState>
-    			<VisualState x:Name="Loaded">
+    			<VisualState x:Name="DataLoaded">
     				<Storyboard>
     					<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="LoadingAnimationImage" d:IsOptimized="True"/>
     					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ProgressBar.IsIndeterminate)" Storyboard.TargetName="progressBar">
@@ -98,7 +98,7 @@
             			<TextBlock x:Name="ArtistTagHeader" TextWrapping="Wrap" Text="Artist" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<controls3:WrapPanel x:Name="ArtistTagPanel" Margin="12,0,0,0"/>
             			<TextBlock x:Name="GeneralTagHeader" TextWrapping="Wrap" Text="Tags" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
-            			<controls3:WrapPanel x:Name="GeneralTagPanel" Margin="12,0,0,0"/>
+            			<controls3:WrapPanel x:Name="GeneralTagPanel" Margin="12,0,0,36"/>
             		</StackPanel>
             	</ScrollViewer>
             </controls:PivotItem>

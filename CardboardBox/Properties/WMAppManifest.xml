@@ -9,6 +9,9 @@
       <Capability Name="ID_CAP_SENSORS" />
       <Capability Name="ID_CAP_WEBBROWSERCOMPONENT" />
     </Capabilities>
+    <Requirements>
+      <Requirement Name="ID_REQ_MEMORY_90" />
+	</Requirements>
     <Tasks>
       <DefaultTask Name="_default" NavigationPage="Modules/LoginPage.xaml" />
     </Tasks>

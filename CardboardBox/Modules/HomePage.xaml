@@ -22,8 +22,8 @@
 	<phone:PhoneApplicationPage.ApplicationBar>
 		<shell:ApplicationBar IsVisible="true" IsMenuEnabled="True" Mode="Default" Opacity="0.85">
 			<shell:ApplicationBar.MenuItems>
-				<shell:ApplicationBarMenuItem x:Name="AppBarSettings" Text="settings" />
-				<shell:ApplicationBarMenuItem x:Name="AppBarLogout" Text="logout" />
+				<shell:ApplicationBarMenuItem x:Name="AppBarSettings" Text="settings"/>
+				<shell:ApplicationBarMenuItem x:Name="AppBarLogout" Text="logout"/>
 			</shell:ApplicationBar.MenuItems>
 		</shell:ApplicationBar>	
 	</phone:PhoneApplicationPage.ApplicationBar>

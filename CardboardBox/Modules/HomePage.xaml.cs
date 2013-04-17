@@ -31,14 +31,6 @@ namespace CardboardBox
 
         #endregion
 
-        #region ListBox Monitors
-
-        private ScrollViewMonitor newPostListMonitor;
-        private Boolean newPostsLoading;
-        private Boolean reachedEnd = false;
-
-        #endregion
-
         #region App Bar Buttons
 
         private readonly ApplicationBarIconButton[] whatsNewAppbarButtons = new ApplicationBarIconButton[]
@@ -70,7 +62,9 @@ namespace CardboardBox
             InitializeComponent();
 
             // Load Appropriate Banner
-            String bannerUrl = App.IsInDarkTheme() ? "/Assets/banner-dark-alt.png" : "/Assets/banner-light-alt.png";
+            String bannerUrl = App.IsInDarkTheme() 
+                ? "/Assets/application-banner-dark.png"
+                : "/Assets/application-banner-light.png";
             BitmapImage bannerSrc = new BitmapImage(new Uri(bannerUrl, UriKind.Relative));
             Panorama.Title = bannerSrc;
 
@@ -93,7 +87,7 @@ namespace CardboardBox
             Loaded += (@s, e) =>
                 {
                     // Remove login screen from back stack
-                    if (NavigationService.BackStack.Any())
+                    while (NavigationService.BackStack.Any())
                         NavigationService.RemoveBackEntry();
 
                     // Attach Scroll Monitors
@@ -112,6 +106,11 @@ namespace CardboardBox
         }
 
         #region Whats New
+
+        private ScrollViewMonitor newPostListMonitor;
+        private Boolean newPostsLoading;
+        private Boolean reachedEnd = false;
+
 
         public PostTupleCollection NewPosts 
         { get { return Session.Instance.NewPosts; } }

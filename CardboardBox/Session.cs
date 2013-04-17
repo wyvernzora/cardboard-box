@@ -160,7 +160,7 @@ namespace CardboardBox
         /// </summary>
         public CookieContainer Cookie { get; set; }
 
-        #region Posts
+        #region Session Variables
 
         /// <summary>
         /// Gets or sets a list of newest posts.
@@ -177,12 +177,16 @@ namespace CardboardBox
         /// </summary>
         public Post Selected { get; set; }
 
+        /// <summary>
+        /// Current tag query.
+        /// </summary>
+        public String[] Query { get; set; }
+
         #endregion
 
         #region User Preferences
 
         private Rating maxRating;
-
 
         /// <summary>
         ///     Gets or sets maximum post rating acceptable for the user.
@@ -349,12 +353,14 @@ namespace CardboardBox
         internal PostTuple[] ExecutePostQuery(Int32 startPage, Int32 pages, params String[] tags)
         {
             // Check for user level enforcement
-            Int32 tagCount = tags.Length;
-            if (MaxComplement != String.Empty) tagCount++;
+            Int32 levelLimit = Level.TagLimit;
+            String[] query = ResolveQueryString(String.Join(" ", tags));
 
-            if (tagCount > userLevels[User.Level].TagLimit)
-                throw new UnauthorizedAccessException(String.Format("Attempt to search for {0} tags while the user level only permits {1}.", tagCount, userLevels[User.Level].TagLimit));
-            
+            if (query.Length > levelLimit)
+                throw new UnauthorizedAccessException(String.Format("Attempt to search {0} tags while user level only allows {1}.", tags.Length, levelLimit));
+
+            String queryString = String.Join("+", query);
+
             // Get Stuff
             Logging.D("Executing a query: page={0}, count={1}, tag_count={2}", startPage, pages, tags.Length);
             List<PostTuple> tuples = new List<PostTuple>();
@@ -364,15 +370,8 @@ namespace CardboardBox
                 var request = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
                 request.AddArgument("limit", PostRequestPageSize);
 
-                String rating = MaxComplement;
-                if (tags.Any(t => t.StartsWith("rating:", StringComparison.CurrentCultureIgnoreCase)))
-                    rating = String.Empty;
-                String tag = rating;
-                if (tags.Length != 0)  tag += "+" + String.Join("+", tags);
-
-                request.AddArgument("tags", tag);
-
-                Logging.D("Query: {0}", tag);
+                request.AddArgument("tags", queryString);
+                Logging.D("Query: {0}", queryString);
 
                 request.AddArgument("page", i);
                 request.ExecuteRequest(Cookie);
@@ -405,6 +404,19 @@ namespace CardboardBox
             }
 
             return tuples.ToArray();
+        }
+        
+        internal String[] ResolveQueryString(String query)
+        {
+            // Get User Settings
+            String rating = MaxComplement;
+            Boolean hasRating = !String.IsNullOrEmpty(rating);
+            var tags = new List<String>(query.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
+
+            // If there is no rating tag in query and rating filter is enabled, add a rating tag
+            if (!tags.Any(t => t.StartsWith("rating:", StringComparison.CurrentCultureIgnoreCase)) && hasRating) tags.Add(rating);
+
+            return tags.ToArray();
         }
 
         #endregion

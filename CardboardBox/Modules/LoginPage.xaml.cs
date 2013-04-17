@@ -1,4 +1,6 @@
-﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+﻿// ReSharper disable CheckNamespace
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // CardboardBox/LoginPage.xaml.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
@@ -30,29 +32,27 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 using CardboardBox.API;
-using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
-using libDanbooru2;
 using libWyvernzora.BarlogX.Animation;
 
 namespace CardboardBox
 {
-    public partial class MainPage : PhoneApplicationPage
+    public partial class MainPage
     {
         private readonly BarloxAnimation animation;
 
-        // Constructor
+        /// <summary>
+        /// Constructor.
+        /// Everyone know what a constructor does.
+        /// </summary>
         public MainPage()
         {
-
-
             InitializeComponent();
 
             // Load Appropriate Banner
-            String bannerUrl = App.IsInDarkTheme() ? "/Assets/banner-dark-alt.png" : "/Assets/banner-light-alt.png";
+            String bannerUrl = App.IsInDarkTheme() ? "/Assets/application-banner-dark.png" : "/Assets/application-banner-light.png";
             BitmapImage bannerSrc = new BitmapImage(new Uri(bannerUrl, UriKind.Relative));
             AppBanner.Source = bannerSrc;
-
 
             // Load Barlox Animation
             StreamResourceInfo animData =
@@ -70,23 +70,31 @@ namespace CardboardBox
             else
                 VisualStateManager.GoToState(this, "LoadingData", false);
 
-
             // Operations after page load
-            Loaded += (@s, e) =>
-                {
-                    // Clear Back Stack
-                    while (NavigationService.BackStack.Any())
-                        NavigationService.RemoveBackEntry();
-
-                    // If credentials already loaded skip login screen
-                    if (Session.Instance.Credentials != null)
-                    {
-                        TextboxUsername.Text = Session.Instance.Credentials.Username;
-                        VerifyCredentials();
-                    }
-                };
+            Loaded += (@s, e) => PageLoaded();
         }
 
+        /// <summary>
+        /// Initialize items that require the page to be 
+        /// completely loaded.
+        /// </summary>
+        private void PageLoaded()
+        {
+            // Clear Back Stack
+            while (NavigationService.BackStack.Any())
+                NavigationService.RemoveBackEntry();
+
+            // If credentials already loaded skip login screen
+            if (Session.Instance.Credentials != null)
+            {
+                TextboxUsername.Text = Session.Instance.Credentials.Username;
+                VerifyCredentials();
+            }
+        }
+
+        /// <summary>
+        /// Attach control event handlers.
+        /// </summary>
         private void AttachEventHandlers()
         {
             ImgChibi.Tap += (@s, e) => animation.TriggerEvent("poke");
@@ -124,6 +132,9 @@ namespace CardboardBox
                 };
         }
 
+        /// <summary>
+        /// Verify user credentials and attempt to login.
+        /// </summary>
         private void VerifyCredentials()
         {
             VisualStateManager.GoToState(this, "LoadingData", true);
