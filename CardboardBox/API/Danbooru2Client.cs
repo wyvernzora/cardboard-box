@@ -119,5 +119,25 @@ namespace CardboardBox.API
 
             return temp.ToArray();
         }
+
+        /// <summary>
+        /// Gets comments from Danbooru 2.0 API for a specific post.
+        /// </summary>
+        /// <param name="postId">ID of the post.</param>
+        /// <returns></returns>
+        public Comment[] GetComments(Int32 postId)
+        {
+            var request = new DanbooruRequest<Comment[]>(credentials, server + CommentIndex);
+            request.AddArgument("search[post_id]", postId);
+            request.AddArgument("group_by", "comment");
+
+            request.ExecuteRequest();
+            while (request.Status == -1) Thread.Sleep(20);
+
+            if (request.Status != 200)
+                throw new Exception("Failed to load comments, HTTP Status " + request.Status);
+
+            return request.Result;
+        }
     }
 }

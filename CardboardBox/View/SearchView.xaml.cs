@@ -96,6 +96,8 @@ namespace CardboardBox
         /// </summary>
         private void PageLoaded()
         {
+            PostTuple.SetViewCommand(viewModel.ViewCommand);
+
             infinityDaemon = new ListViewInfinityDaemon(SearchResultList, 60, viewModel.LoadPageCommand);
             PostTuple.SetViewCommand(viewModel.ViewCommand);
 
@@ -107,6 +109,7 @@ namespace CardboardBox
                 {
                     query = query.Replace("+", " ");
                     viewModel.SearchString = query;
+                    SearchBox.Text = query;
                     Focus();
                     viewModel.SearchCommand.Execute(null);
                 }

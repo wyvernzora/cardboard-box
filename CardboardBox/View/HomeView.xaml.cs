@@ -88,6 +88,8 @@ namespace CardboardBox
 
         private void PageLoaded()
         {
+            PostTuple.SetViewCommand(viewModel.ViewCommand);
+
             // Remove login screen from back stack
             while (NavigationService.BackStack.Any())
                 NavigationService.RemoveBackEntry();

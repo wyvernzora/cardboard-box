@@ -65,11 +65,7 @@ namespace CardboardBox.ViewModel
         {
             get
             {
-                return viewCommand ?? (viewCommand = new ParamActionCommand<Post>(p =>
-                {
-                    Session.Instance.Selected = p;
-                    NavigationHelper.Navigate(new Uri(Constants.PostView, UriKind.Relative));
-                }));
+                return viewCommand ?? (viewCommand = new ParamActionCommand<Post>(p => NavigationHelper.Navigate(new Uri(Constants.PostView, UriKind.Relative), p)));
             }
         }
 

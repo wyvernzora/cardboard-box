@@ -66,11 +66,18 @@ namespace CardboardBox.ViewModel
             {
                 return viewCommand ?? (viewCommand = new ParamActionCommand<Post>(p =>
                     {
-                        Session.Instance.Selected = p;
-                        NavigationHelper.Navigate(new Uri(Constants.PostView, UriKind.Relative));
+                        //Session.Instance.Selected = p;
+                        NavigationHelper.Navigate(new Uri(Constants.PostView, UriKind.Relative), p);
                     }));
             }
         }
+
+        private ICommand logoutCommand;
+        public ICommand LogoutCommand
+        {
+            get { return logoutCommand ?? (logoutCommand = new ActionCommand(Session.Instance.LogOut)); }
+        }
+
 
         #endregion
 

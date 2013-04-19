@@ -9,13 +9,22 @@
     xmlns:System="clr-namespace:System;assembly=mscorlib"
     xmlns:controls3="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
 	xmlns:local="clr-namespace:CardboardBox"
-    x:Class="CardboardBox.ViewPost" 
+    x:Class="CardboardBox.PostView" 
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
+	<phone:PhoneApplicationPage.Resources>
+		<DataTemplate x:Key="CommentTemplate">
+			<Grid>
+				<Border Margin="6" BorderBrush="{StaticResource PhoneInverseBackgroundBrush}" BorderThickness="1" Background="#64FAFF86" >
+					<TextBlock TextWrapping="Wrap" Text="{Binding Body}" Foreground="{StaticResource PhoneForegroundBrush}" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeMedium}" Margin="6"/>
+				</Border>
+			</Grid>
+		</DataTemplate>
+	</phone:PhoneApplicationPage.Resources>
 
 	<phone:PhoneApplicationPage.ApplicationBar>
 		<shell:ApplicationBar IsVisible="false" IsMenuEnabled="true" Mode="Minimized" Opacity="0.85">
@@ -34,12 +43,19 @@
     			<VisualStateGroup.Transitions>
     				<VisualTransition GeneratedDuration="0:0:0.5"/>
     			</VisualStateGroup.Transitions>
-    			<VisualState x:Name="DataLoading">
+    			<VisualState x:Name="LoadingState1">
     				<Storyboard>
     					<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="PostBrowser" d:IsOptimized="True"/>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(LockablePivot.IsLocked)" Storyboard.TargetName="PivotRoot">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<System:Boolean>True</System:Boolean>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
     				</Storyboard>
     			</VisualState>
-    			<VisualState x:Name="DataLoaded">
+    			<VisualState x:Name="LoadedState">
     				<Storyboard>
     					<DoubleAnimation Duration="0" To="0" Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="LoadingAnimationImage" d:IsOptimized="True"/>
     					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ProgressBar.IsIndeterminate)" Storyboard.TargetName="progressBar">
@@ -56,14 +72,12 @@
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
         <!--Pivot Control-->
-        <controls3:LockablePivot x:Name="PivotRoot" Title="VIEW POST">
+        <controls3:LockablePivot x:Name="PivotRoot" Title="{Binding Path=ViewTitle}">
             <!--Pivot item one-->
             <controls:PivotItem x:Name="ImagePivotItem" Header="image">
                 <Grid Margin="8">
                 	<phone:WebBrowser x:Name="PostBrowser" Margin="0" Opacity="0"/>
-                
-                    
-                    
+                   
                 	<Grid x:Name="grid" Margin="0" Width="236" Height="242" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
                 		<Grid.RowDefinitions>
                 			<RowDefinition/>
@@ -81,61 +95,34 @@
             <controls:PivotItem x:Name="InfoPivotItem" Header="info" Margin="12,28,12,0">
             	<ScrollViewer Margin="0" HorizontalContentAlignment="Stretch">
             		<StackPanel>
-            			<TextBlock TextWrapping="Wrap" Text="Information" Margin="12,0,0,0" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" Foreground="{StaticResource PhoneDisabledBrush}"/>
-            			<TextBlock x:Name="PostIdHeader" TextWrapping="Wrap" Text="Post ID" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock TextWrapping="Wrap" Text="Information" Margin="12,0,0,0" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" Foreground="{StaticResource PhoneSubtleBrush}"/>
+            			<TextBlock x:Name="PostIdHeader" TextWrapping="Wrap" Text="Post ID" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<TextBlock x:Name="PostIdTextBlock" TextWrapping="Wrap" Text="12345678" Margin="12,0,0,0" Foreground="{StaticResource PhoneForegroundBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-            			<TextBlock x:Name="RatingHeader" TextWrapping="Wrap" Text="Rating" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock x:Name="RatingHeader" TextWrapping="Wrap" Text="Rating" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<TextBlock x:Name="RatingTextBlock" TextWrapping="Wrap" Text="Safe || Questionable || Explicit" Margin="12,0,0,0" Foreground="{StaticResource PhoneForegroundBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-            			<TextBlock x:Name="UploaderHeader" TextWrapping="Wrap" Text="Uploader" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock x:Name="UploaderHeader" TextWrapping="Wrap" Text="Uploader" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<TextBlock x:Name="UploaderTextBlock" TextWrapping="Wrap" Text="Nobody, really." Margin="12,0,0,0" Foreground="{StaticResource PhoneForegroundBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-            			<TextBlock x:Name="SizeHeader" TextWrapping="Wrap" Text="Size" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock x:Name="SizeHeader" TextWrapping="Wrap" Text="Size" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<TextBlock x:Name="SizeTextBlock" TextWrapping="Wrap" Text="0 Bytes (0x0)" Margin="12,0,0,0" Foreground="{StaticResource PhoneForegroundBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-            			<TextBlock TextWrapping="Wrap" Text="Tags" Margin="12,36,0,0" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" Foreground="{StaticResource PhoneDisabledBrush}"/>
-            			<TextBlock x:Name="CopyrightTagHeader" TextWrapping="Wrap" Text="Copyright" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock TextWrapping="Wrap" Text="Tags" Margin="12,36,0,0" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeExtraLarge}" Foreground="{StaticResource PhoneSubtleBrush}"/>
+            			<TextBlock x:Name="CopyrightTagHeader" TextWrapping="Wrap" Text="Copyright" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<controls3:WrapPanel x:Name="CopyrightTagPanel" Margin="12,0,0,0"/>
-            			<TextBlock x:Name="CharacterTagHeader" TextWrapping="Wrap" Text="Characters" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock x:Name="CharacterTagHeader" TextWrapping="Wrap" Text="Characters" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<controls3:WrapPanel x:Name="CharacterTagPanel" Margin="12,0,0,0"/>
-            			<TextBlock x:Name="ArtistTagHeader" TextWrapping="Wrap" Text="Artist" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock x:Name="ArtistTagHeader" TextWrapping="Wrap" Text="Artist" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<controls3:WrapPanel x:Name="ArtistTagPanel" Margin="12,0,0,0"/>
-            			<TextBlock x:Name="GeneralTagHeader" TextWrapping="Wrap" Text="Tags" Margin="12,4,0,0" Foreground="{StaticResource PhoneDisabledBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
+            			<TextBlock x:Name="GeneralTagHeader" TextWrapping="Wrap" Text="Tags" Margin="12,4,0,0" Foreground="{StaticResource PhoneSubtleBrush}" FontFamily="{StaticResource PhoneFontFamilySemiBold}" FontSize="{StaticResource PhoneFontSizeSmall}"/>
             			<controls3:WrapPanel x:Name="GeneralTagPanel" Margin="12,0,0,36"/>
             		</StackPanel>
             	</ScrollViewer>
             </controls:PivotItem>
 
-            <controls:PivotItem x:Name="RelatedPivotItem" Header="related posts" Margin="12,28,12,0">
-            	<controls3:LongListSelector x:Name="RelatedList" Margin="0" IsFlatList="True">
-            		<controls3:LongListSelector.ItemTemplate>
-							<DataTemplate>
-								<!--<StackPanel Orientation="Horizontal">
-									<Border Height="125" 
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
-										<Image Source="{Binding First.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=First}"  />
-									</Border>
-									<Border Height="125" 
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
-										<Image Source="{Binding Second.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=Second}" />
-									</Border>
-									<Border Height="125" 
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
-										<Image Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Path=Third}" />
-									</Border>
-								</StackPanel>-->
-								<local:PostTrio Tuple="{Binding}" />
-							</DataTemplate>
-						</controls3:LongListSelector.ItemTemplate>
-				</controls3:LongListSelector>
-            </controls:PivotItem>
-
             <!--Pivot item two-->
             <controls:PivotItem x:Name="CommentsPivotItem" Header="comments">
                 <Grid>
-                	<TextBlock x:Name="NoCommentTextBlock" Margin="12,12,12,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="{StaticResource PhoneFontFamilyLight}" FontSize="{StaticResource PhoneFontSizeMedium}" Foreground="{StaticResource PhoneDisabledBrush}">
-                		<Run Text="It seems like there are no comments here."/>
-                		<LineBreak/>
-                		<Run Text="Wanna be the first to post one?"/>
-                	</TextBlock>
-                	<ListBox x:Name="CommentsList" Margin="0"/>
+                	<TextBlock x:Name="NoCommentTextBlock" Margin="12,12,12,0" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="{StaticResource PhoneFontFamilyLight}" FontSize="{StaticResource PhoneFontSizeMedium}" Foreground="{StaticResource PhoneSubtleBrush}" Visibility="Collapsed" Text="It seems like there are no comments here."/>
+                	<ListBox x:Name="CommentsList" Margin="0" ItemTemplate="{StaticResource CommentTemplate}"
+                             ItemsSource="{Binding Path=Comments}" HorizontalContentAlignment="Stretch"/>
                 </Grid>
             </controls:PivotItem>
         </controls3:LockablePivot>

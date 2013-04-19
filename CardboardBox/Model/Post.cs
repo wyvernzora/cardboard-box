@@ -32,6 +32,11 @@ namespace CardboardBox.Model
     [DataContract(Name = "post")]
     public class Post
     {
+        private static readonly String[] SizeUnits =
+            {
+                "B", "KB", "MB", "GB"
+            };
+
         [DataMember(Name = "id")]
         public Int32 ID { get; set; }
 
@@ -97,6 +102,22 @@ namespace CardboardBox.Model
         public Uri PreviewUrl
         {
             get { return new Uri(Constants.SiteUrl + Constants.PreviewDir + MD5 + ".jpg"); }
+        }
+
+        [IgnoreDataMember]
+        public String FileSizeString
+        {
+            get
+            {
+                Double size = FileSize;
+                Int32 order = 0;
+                while (size >= 1024 && order + 1 < SizeUnits.Length)
+                {
+                    order++;
+                    size = size / 1024.0;
+                }
+                return String.Format("{0:0.#} {1} ({2}x{3})", size, SizeUnits[order], Width, Height);
+            }
         }
 
         #endregion

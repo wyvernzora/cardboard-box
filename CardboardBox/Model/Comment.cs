@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace CardboardBox.API
+namespace CardboardBox.Model
 {
     [DataContract]
     public class Comment
