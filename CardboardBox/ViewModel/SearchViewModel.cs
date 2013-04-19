@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using CardboardBox.Model;
 using CardboardBox.UI;
 using CardboardBox.Utilities;
@@ -17,9 +13,9 @@ namespace CardboardBox.ViewModel
 {
     public class SearchViewModel : ViewModelBase
     {
-        private const String LoadingState = "LoadingState";
-        private const String LoadedState = "LoadedState";
-        private const String NoResultState = "NoResultState";
+        public const String LoadingState = "LoadingState";
+        public const String LoadedState = "LoadedState";
+        public const String NoResultState = "NoResultState";
 
         public SearchViewModel(SearchView view) 
             : base(view.Dispatcher)
@@ -61,7 +57,7 @@ namespace CardboardBox.ViewModel
         private ICommand loadPageCommand;
         public ICommand LoadPageCommand
         {
-            get { return loadPageCommand ?? (loadPageCommand = new ActionCommand(() => LoadPage(false))); }
+            get { return loadPageCommand ?? (loadPageCommand = new ActionCommand(() => LoadPage(true))); }
         }
 
         private ICommand viewCommand;

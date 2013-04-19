@@ -13,9 +13,9 @@ using Microsoft.Phone.Controls;
 
 namespace CardboardBox
 {
-    public partial class SettingsPage : PhoneApplicationPage
+    public partial class SettingsView
     {
-        public SettingsPage()
+        public SettingsView()
         {
             InitializeComponent();
         }

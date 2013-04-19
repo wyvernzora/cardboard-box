@@ -27,16 +27,12 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using CardboardBox.UI;
-using CardboardBox.Utilities;
 using CardboardBox.ViewModel;
 using Microsoft.Phone.Shell;
-using libWyvernzora.Core;
 
 namespace CardboardBox
 {
@@ -55,7 +51,12 @@ namespace CardboardBox
 
             // Create ViewModel
             viewModel = new SearchViewModel(this);
-            viewModel.ChangeState += (@s, e) => VisualStateManager.GoToState(this, e.State, e.Transition);
+            viewModel.ChangeState += (@s, e) =>
+                {
+                    if (SystemTray.ProgressIndicator != null)
+                        SystemTray.ProgressIndicator.IsVisible = e.State == SearchViewModel.LoadingState;
+                    VisualStateManager.GoToState(this, e.State, e.Transition);
+                };
             DataContext = viewModel;
 
             // Load Appropriate Logo
