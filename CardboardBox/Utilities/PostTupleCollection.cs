@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using CardboardBox.API;
+using CardboardBox.Model;
 using CardboardBox.UI;
 using libDanbooru2;
 

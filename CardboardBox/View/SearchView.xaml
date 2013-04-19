@@ -8,7 +8,7 @@
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
 	xmlns:local="clr-namespace:CardboardBox"
     xmlns:System="clr-namespace:System;assembly=mscorlib"
-    x:Class="CardboardBox.SearchPage"
+    x:Class="CardboardBox.SearchView"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -23,7 +23,6 @@
 	<phone:PhoneApplicationPage.ApplicationBar>
 		<shell:ApplicationBar IsVisible="true" IsMenuEnabled="True" Mode="Default" Opacity="0.85">
 			<shell:ApplicationBarIconButton IconUri="/Assets/SDK/favs.addto.png" Text="bookmark" />
-
 			<shell:ApplicationBar.MenuItems>
 				<shell:ApplicationBarMenuItem x:Name="AppBarSettings" Text="settings" />
 				<shell:ApplicationBarMenuItem x:Name="AppBarLogout" Text="logout" />
@@ -52,7 +51,7 @@
     			<VisualStateGroup.Transitions>
     				<VisualTransition GeneratedDuration="0:0:1"/>
     			</VisualStateGroup.Transitions>
-    			<VisualState x:Name="DataLoading">
+    			<VisualState x:Name="LoadingState">
     				<Storyboard>
     					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="SearchBox">
     						<DiscreteObjectKeyFrame KeyTime="0">
@@ -63,7 +62,18 @@
     					</ObjectAnimationUsingKeyFrames>
     				</Storyboard>
     			</VisualState>
-    			<VisualState x:Name="DataLoaded"/>
+    			<VisualState x:Name="LoadedState"/>
+    			<VisualState x:Name="NoResultState">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="NoResultBox">
+    						<DiscreteObjectKeyFrame KeyTime="0">
+    							<DiscreteObjectKeyFrame.Value>
+    								<Visibility>Visible</Visibility>
+    							</DiscreteObjectKeyFrame.Value>
+    						</DiscreteObjectKeyFrame>
+    					</ObjectAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
@@ -81,7 +91,9 @@
         		<RowDefinition Height="Auto"/>
         		<RowDefinition/>
         	</Grid.RowDefinitions>
-        	<toolkit:PhoneTextBox x:Name="SearchBox" Margin="12,0" TextWrapping="Wrap" VerticalAlignment="Top" BorderThickness="3" 
+        	<toolkit:PhoneTextBox
+                x:Name="SearchBox" Margin="12,0" TextWrapping="Wrap" 
+                VerticalAlignment="Top" BorderThickness="3" 
         		ActionIcon="/Assets/SDK/search-action.png" Hint="Search"
         		InputScope="Search" Height="80" MaxHeight="80" Grid.ColumnSpan="2"/>
         	<TextBlock x:Name="SearchMessage" HorizontalAlignment="Right" TextWrapping="Wrap" Text="0 / 2 Tags" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}" FontFamily="{StaticResource PhoneFontFamilySemiLight}" Foreground="{StaticResource PhoneSubtleBrush}" Margin="0,0,23,0" Grid.Row="1" Grid.Column="1"/>
@@ -100,28 +112,27 @@
 			
 
 
-        	<toolkit:LongListSelector x:Name="SearchResultList" Grid.RowSpan="2"
+        	<toolkit:LongListSelector x:Name="SearchResultList" Grid.RowSpan="2" ItemsSource="{Binding Path=SearchResults}"
 					IsFlatList="True" Width="420" HorizontalAlignment="Left" Background="Transparent">
         		
-										<toolkit:LongListSelector.ItemTemplate>
-							<DataTemplate>
-								<!--<StackPanel Orientation="Horizontal">
-									<Border Height="125" 
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
-										<Image Source="{Binding First.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding First}"  />
-									</Border>
-									<Border Height="125" 
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
-										<Image Source="{Binding Second.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Second}" />
-									</Border>
-									<Border Height="125" 
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6">
-										<Image Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Third}" />
-									</Border>
-								</StackPanel>-->
-								<local:PostTrio Tuple="{Binding}"/>
-							</DataTemplate>
-						</toolkit:LongListSelector.ItemTemplate>
+				<toolkit:LongListSelector.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Height="125" Visibility="{Binding Path=FirstVisibility}" Command="{Binding Path=ViewCommand}" CommandParameter="{Binding Path=First}"
+    									BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6" Style="{StaticResource PostTrioButtonTemplate}">
+                                <Image Source="{Binding First.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding First}" />
+                            </Button>
+                            <Button Height="125" Visibility="{Binding Path=SecondVisibility}" Command="{Binding Path=ViewCommand}" CommandParameter="{Binding Path=Second}"
+    									BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6" Style="{StaticResource PostTrioButtonTemplate}">
+                                <Image Source="{Binding Second.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Second}" />
+                            </Button>
+                            <Button Height="125" Visibility="{Binding Path=ThirdVisibility}" Command="{Binding Path=ViewCommand}" CommandParameter="{Binding Path=Third}"
+    									BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6" Style="{StaticResource PostTrioButtonTemplate}">
+                                <Image Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Third}" />
+                            </Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </toolkit:LongListSelector.ItemTemplate>
 
 			</toolkit:LongListSelector>
 			

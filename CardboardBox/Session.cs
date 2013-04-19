@@ -33,6 +33,7 @@ using System.Net;
 using System.Threading;
 using System.Windows;
 using CardboardBox.API;
+using CardboardBox.Model;
 using CardboardBox.UI;
 using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
@@ -63,28 +64,7 @@ namespace CardboardBox
 
         #region Constants
 
-// ReSharper disable InconsistentNaming
 
-        public const String SiteUrl = "http://danbooru.donmai.us";
-
-        public const String UserIndexUrl = "/user/index.json?";
-
-        public const String PostIndexUrl = "/posts.json?";
-
-        public const String CommentIndexUrl = "/comments.json?";
-        
-        public const String PreviewDir = "/ssd/data/preview/";
-
-
-        public const Int32 PostRequestPageSize = 60;
-
-        public const Int32 PostRequestTupleSize = 20;
-
-        public const String UserAgentString =
-            "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.43 Safari/537.31";
-
-        public const String SaltString = "choujin-steiner--{0}--";
-// ReSharper restore InconsistentNaming
 
         #endregion
 
@@ -130,6 +110,7 @@ namespace CardboardBox
         private readonly IsolatedStorageSettings settings;
         private readonly Dictionary<int, UserLevel> userLevels;
 
+
         /// <summary>
         /// Gets the IsolatedStorage instance for the application.
         /// </summary>
@@ -139,6 +120,11 @@ namespace CardboardBox
         ///     Gets or sets credentials for current session.
         /// </summary>
         public DanbooruCredentials Credentials { get; set; }
+
+        /// <summary>
+        /// Gets the Danbooru 2.0 API Client for the session.
+        /// </summary>
+        public Danbooru2Client Client { get; private set; }
 
         /// <summary>
         ///     Gets the current user info.
@@ -225,24 +211,7 @@ namespace CardboardBox
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Navigates to the specified Uri.
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <param name="args"></param>
-        public void Navigate(Uri uri, String args = null)
-        {
-            var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
-            if (phoneApplicationFrame != null)
-            {
-                NavigationArguments = args;
-                phoneApplicationFrame.Navigate(uri);
-            }
-            else
-                throw new Exception("Navigation Error!");
-        }
-
+        
         public void ClearBackStack()
         {
             var phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
@@ -272,29 +241,19 @@ namespace CardboardBox
         {
             // Save Settings
 
-
             // Discard Session
             instance = null;
+            Credentials = null;
 
             // Nullify Stored Credentials
             settings.Remove("username");
             settings.Remove("hash");
+            settings.Save();
 
             // Go Back to Login
-            Navigate(new Uri("/Modules/LoginPage.xaml", UriKind.Relative));
+            NavigationHelper.Navigate(new Uri(Constants.LoginView, UriKind.Relative));
         }
-
-        /// <summary>
-        /// Clears and reloads the session.
-        /// </summary>
-        internal void ReloadSession()
-        {
-            ClearBackStack();
-            instance = null;
-            // Go Back to Login
-            Navigate(new Uri("/Modules/LoginPage.xaml", UriKind.Relative));
-        }
-
+        
         /// <summary>
         /// Loads more New Posts on the caller thread.
         /// May block for a long time.
@@ -302,54 +261,8 @@ namespace CardboardBox
         /// <param name="pages"></param>
         internal PostTuple[] GetMoreNewPosts(Int32 pages)
         {
-            Logging.D("Loading more new posts!");
-            List<PostTuple> tuples = new List<PostTuple>();
-            Int32 retry = 0;
-            for (int i = 0; i < pages; i++)
-            {
-                var newRequest = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
-                newRequest.AddArgument("limit", PostRequestPageSize);
-
-                String rating = MaxComplement;
-                if (MaxComplement != String.Empty)
-                    newRequest.AddArgument("tags", rating);
-
-                Int32 page = ((NewPosts.Count + tuples.Count) * 3) / PostRequestPageSize + 1;
-
-                newRequest.AddArgument("page", page);
-
-                newRequest.ExecuteRequest(Cookie);
-                while (newRequest.Status == -1) ;
-                Post[] newPosts = newRequest.Result;
-
-                if (newRequest.Status != 200)
-                {
-                    Logging.D("ERROR: Failed to load more new posts, HTTP Status = {0}, {1} retries left", newRequest.Status, retry);
-                    i--;
-                    retry++;
-                    if (retry >= 3)
-                    {
-                        Logging.D("ERROR: Failed to load more posts and retries have been used up!");
-                        return tuples.ToArray();
-                    }
-
-                    continue;
-                }
-
-                newPosts = newPosts.PadEnd(NumericOps.Align(newPosts.Length, 3), null);
-
-                foreach (var p in newPosts)
-                    if (p != null) p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
-
-                for (int j = 0; j < newPosts.Length - 2; j += 3)
-                    tuples.Add(new PostTuple { First = newPosts[j], Second = newPosts[j + 1], Third = newPosts[j + 2] });
-
-                if (newPosts.Length < PostRequestPageSize) break;
-            }
-
-
-            Logging.D("More new posts loaded!");
-            return tuples.ToArray();
+            Int32 page = (NewPosts.Count * 3) / Client.PageSize + 1;
+            return ExecutePostQuery(page, pages);
         }
 
         /// <summary>
@@ -366,55 +279,21 @@ namespace CardboardBox
             String[] query = ResolveQueryString(String.Join(" ", tags));
 
             if (query.Length > levelLimit)
-                throw new UnauthorizedAccessException(String.Format("Attempt to search {0} tags while user level only allows {1}.", tags.Length, levelLimit));
+                throw new UnauthorizedAccessException(
+                    String.Format("Attempt to search {0} tags while user level only allows {1}.", tags.Length,
+                                  levelLimit));
 
-            String queryString = String.Join("+", query);
-
-            // Get Stuff
-            Logging.D("Executing a query: page={0}, count={1}, tag_count={2}", startPage, pages, tags.Length);
             List<PostTuple> tuples = new List<PostTuple>();
-            Int32 retry = 0;
-            for (int i = startPage; i < startPage + pages; i++)
-            {
-                var request = new DanbooruRequest<Post[]>(Credentials, SiteUrl + PostIndexUrl);
-                request.AddArgument("limit", PostRequestPageSize);
+            Post[] posts = Client.GetPosts(startPage, pages, query);
 
-                request.AddArgument("tags", queryString);
-                Logging.D("Query: {0}", queryString);
+            posts = posts.PadEnd(posts.Length.Align(3), null);
 
-                request.AddArgument("page", i);
-                request.ExecuteRequest(Cookie);
-                while (request.Status == -1) Thread.Sleep(20);  // wait
-
-                Post[] posts = request.Result;
-
-                if (request.Status != 200)
-                {
-                    Logging.D("ERROR: Failed to execute query, HTTP Status = {0}, {1} retries left", request.Status, retry);
-                    i--;
-                    retry++;
-                    if (retry >= 3)
-                    {
-                        Logging.D("ERROR: Failed to execute query and retries have been used up, abort!");
-                        return tuples.ToArray();
-                    }
-                    continue;
-                }
-
-                posts = posts.PadEnd(NumericOps.Align(posts.Length, 3), null);
-
-                foreach (var p in posts)
-                    if (p != null) p.PreviewUrl = new Uri(SiteUrl + PreviewDir + p.MD5 + ".jpg");
-
-                for (int j = 0; j < posts.Length - 2; j += 3)
-                    tuples.Add(new PostTuple { First = posts[j], Second = posts[j + 1], Third = posts[j + 2] });
-
-                if (posts.Length < PostRequestPageSize) break;
-            }
-
+            for (int j = 0; j < posts.Length - 2; j += 3)
+                tuples.Add(new PostTuple {First = posts[j], Second = posts[j + 1], Third = posts[j + 2]});
+            
             return tuples.ToArray();
         }
-        
+
         internal String[] ResolveQueryString(String query)
         {
             // Get User Settings
@@ -427,6 +306,7 @@ namespace CardboardBox
 
             return tags.ToArray();
         }
+        
 
         #endregion
 
@@ -452,27 +332,15 @@ namespace CardboardBox
             BackgroundWorker bw = new BackgroundWorker();
             bw.DoWork += (@s, e) =>
                 {
-                    Logging.D("Starting Session Initialization");
+                    Logging.D("Session.InitializeAsync(): Starting Session Initialization");
+
+                    // Create the client
+                    Client = new Danbooru2Client(Constants.SiteHostname, Credentials);
 
                     // Get User Profile
-                    DanbooruRequest<User[]> userRequest = new DanbooruRequest<User[]>(Instance.Credentials,
-                                                                                      SiteUrl + UserIndexUrl);
-                    userRequest.AddArgument("name", Instance.Credentials.Username);
+                    User = Client.GetUser(Credentials.Username);
 
-                    userRequest.ExecuteRequest(Instance.Cookie);
-                    while (userRequest.Status == -1) ; // Wait for request to complete
-                    User[] result = userRequest.Result;
-                    User =
-                        result.First(
-                            u => StringComparer.InvariantCultureIgnoreCase.Equals(instance.Credentials.Username, u.Name));
-
-                    Logging.D("User profile retrieved");
-
-#if DEBUG
-                    if (User == null)
-                        Debugger.Break(); // Since user is logged in, the profile MUST be there.
-#endif
-                    Logging.D("Loading posts");
+                    Logging.D("Session.InitializeAsync(): Loading posts");
 
                     // Load Template generator
                     PostViewerTemplate = new PostViewerTemplate("Assets/template.html");
@@ -481,7 +349,6 @@ namespace CardboardBox
                     NewPosts = new PostTupleCollection();
                     PostTuple[] tuples = GetMoreNewPosts(3);
                     foreach (var t in tuples) NewPosts.Add(t);
-
                 };
             bw.RunWorkerCompleted += (@s, e) => callback();
             bw.RunWorkerAsync();

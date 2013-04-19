@@ -183,13 +183,12 @@ namespace CardboardBox.API
         ///     Executes the Danbooru HTTP request.
         /// </summary>
         /// <returns></returns>
-        public void ExecuteRequest(CookieContainer cookie)
+        public void ExecuteRequest()
         {
             String url = queryUrl + String.Join("&", from a in args select String.Format("{0}={1}", a.Key, a.Value));
 
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-            request.CookieContainer = cookie;
-            request.UserAgent = Session.UserAgentString;
+            request.UserAgent = Constants.UserAgentString;
             request.BeginGetResponse(OnResponseReceived, request);
         }
     }

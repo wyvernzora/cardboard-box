@@ -27,7 +27,6 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using libDanbooru2;
 using libWyvernzora.Core;
 
 namespace CardboardBox.API
@@ -62,7 +61,7 @@ namespace CardboardBox.API
             hash = String.Join(String.Empty,
                                from b in
                                    hasher.ComputeHash(
-                                       Encoding.UTF8.GetBytes(String.Format(Session.SaltString, password)))
+                                       Encoding.UTF8.GetBytes(String.Format(Constants.SaltString, password)))
                                select DirectIntConv.ToHexString(b, 2).ToLower());
         }
 

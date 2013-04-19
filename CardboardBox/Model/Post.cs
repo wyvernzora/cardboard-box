@@ -27,7 +27,7 @@ using System;
 using System.Runtime.Serialization;
 using libDanbooru2;
 
-namespace CardboardBox.API
+namespace CardboardBox.Model
 {
     [DataContract(Name = "post")]
     public class Post
@@ -94,7 +94,10 @@ namespace CardboardBox.API
         #region Additional properties (not serialized)
 
         [IgnoreDataMember]
-        public Uri PreviewUrl { get; set; }
+        public Uri PreviewUrl
+        {
+            get { return new Uri(Constants.SiteUrl + Constants.PreviewDir + MD5 + ".jpg"); }
+        }
 
         #endregion
     }

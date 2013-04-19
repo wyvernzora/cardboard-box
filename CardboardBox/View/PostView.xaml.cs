@@ -38,8 +38,11 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using System.Windows.Resources;
 using CardboardBox.API;
+using CardboardBox.Model;
 using CardboardBox.UI;
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
+using Microsoft.Phone.Tasks;
 using libWyvernzora.BarlogX.Animation;
 
 namespace CardboardBox
@@ -65,6 +68,7 @@ namespace CardboardBox
         private ObservableCollection<Comment> comments;
         private ScrollViewMonitor monitor;
         private Post p;
+        private Boolean eventsAttached = false;
         private Boolean reachedEnd;
         private Boolean relatedLoading;
         private Int32 relatedPages = 1;
@@ -101,6 +105,35 @@ namespace CardboardBox
         {
             Logging.D("ViewPost: Loaded.");
 
+            // Check argument to verify actual post object
+         /*
+            String postId;
+            if (NavigationContext.QueryString.TryGetValue("post", out postId))
+            {
+                if (Int32.Parse(postId) != Session.Instance.Selected.ID)
+                    throw new InvalidOperationException("");
+            }
+         */
+            // Attach app bar events if not already attached
+            if (!eventsAttached)
+            {
+                var shareButton = ApplicationBar.Buttons[0] as ApplicationBarIconButton;
+                if (shareButton != null)
+                    shareButton.Click += (@s, e) =>
+                        {
+                            var shareTask = new ShareLinkTask
+                                {
+                                    Title = "Danbooru Post #" + p.ID.ToString(CultureInfo.InvariantCulture),
+                                    LinkUri = new Uri(Constants.SiteUrl + Constants.PostShareSuffix + p.ID.ToString(CultureInfo.InvariantCulture), UriKind.Absolute),
+                                    Message = "Check out this post on Danbooru!"
+                                };
+                            shareTask.Show();
+                        };
+
+                eventsAttached = true;
+            }
+
+
             // DO NOT LOAD F**KING GIFS!!! THEY BLOW UP YOUR PHONE!!!
             if (p.FileExtension.ToLower() == "gif")
             {
@@ -131,7 +164,7 @@ namespace CardboardBox
                                                                    "parent:" +
                                                                    parentId.ToString(
                                                                        CultureInfo.InvariantCulture));
-                        if (tuples.Length < Session.PostRequestPageSize) reachedEnd = true;
+                        if (tuples.Length < 20) reachedEnd = true;
                     }
                     else tuples = new PostTuple[0];
 
@@ -231,12 +264,12 @@ namespace CardboardBox
         {
             // Load Comments
             DanbooruRequest<Comment[]> request = new DanbooruRequest<Comment[]>(Session.Instance.Credentials,
-                                                                                Session.SiteUrl +
-                                                                                Session.CommentIndexUrl);
+                                                                                Constants.SiteUrl +
+                                                                                Danbooru2Client.CommentIndex);
             request.AddArgument("search[post_id]", p.ID);
             request.AddArgument("group_by", "comment"); // Wierd argument required by Danbooru 2.0 specification.
 
-            request.ExecuteRequest(Session.Instance.Cookie);
+            request.ExecuteRequest();
             while (request.Status < 0) Thread.Sleep(20); // Wait for request to return
 
             if (request.Status != 200)
@@ -295,7 +328,7 @@ namespace CardboardBox
                                                                            "parent:" +
                                                                            parentId.ToString(
                                                                                CultureInfo.InvariantCulture));
-                    if (tuples.Length < Session.PostRequestTupleSize) reachedEnd = true;
+                    if (tuples.Length < 20) reachedEnd = true;
 
                     Dispatcher.BeginInvoke(() =>
                         {
@@ -307,7 +340,10 @@ namespace CardboardBox
                 });
         }
 
-
+        /// <summary>
+        /// Navigates to a related post within the page?
+        /// </summary>
+        /// <param name="post"></param>
         private void NavigateToRelated(Post post)
         {
             // Kick in animation
@@ -370,7 +406,7 @@ namespace CardboardBox
                                     String tag = ((TextBlock) s).Tag as string;
                                     if (tag == null) return;
 
-                                    Session.Instance.Navigate(new Uri("/Modules/SearchPage.xaml", UriKind.Relative), tag);
+                                    NavigationHelper.Navigate(new Uri("/View/SearchPage.xaml", UriKind.Relative), tag);
                                 };
 
                             block.Inlines.Add(new Run

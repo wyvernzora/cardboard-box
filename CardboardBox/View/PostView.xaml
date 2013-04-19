@@ -55,7 +55,6 @@
     			</VisualState>
     		</VisualStateGroup>
     	</VisualStateManager.VisualStateGroups>
-
         <!--Pivot Control-->
         <controls3:LockablePivot x:Name="PivotRoot" Title="VIEW POST">
             <!--Pivot item one-->

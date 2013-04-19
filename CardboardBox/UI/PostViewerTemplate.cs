@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Resources;
 using CardboardBox.API;
+using CardboardBox.Model;
 using libDanbooru2;
 
 namespace CardboardBox
@@ -25,8 +26,8 @@ namespace CardboardBox
         public String GeneratePage(String colorCode, Post post)
         {
             String fileUrl = post.HasLarge ?
-                Session.SiteUrl + "/data/sample/sample-" + post.MD5 + "." + post.FileExtension
-                : Session.SiteUrl + "/data/" + post.MD5 + "." + post.FileExtension;
+                Constants.SiteUrl + "/data/sample/sample-" + post.MD5 + "." + post.FileExtension
+                : Constants.SiteUrl + "/data/" + post.MD5 + "." + post.FileExtension;
             
             return String.Format(template, colorCode, fileUrl);
         }

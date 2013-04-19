@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// CardboardBox/User.cs
+// CardboardBox/NavigationHelper.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -24,33 +24,36 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 using System;
-using System.Runtime.Serialization;
+using System.Windows;
+using Microsoft.Phone.Controls;
 
-namespace CardboardBox.API
+namespace CardboardBox
 {
-    [DataContract(Name = "post")]
-    public class User
+    /// <summary>
+    ///     Static navigation helper.
+    /// </summary>
+    public static class NavigationHelper
     {
-        [DataMember(Name = "id")]
-        public Int32 ID { get; set; }
+        /// <summary>
+        ///     Gets or sets argument for navigation.
+        /// </summary>
+        public static Object NavigationArgument { get; set; }
 
-        [DataMember(Name = "name")]
-        public String Name { get; set; }
-
-        [DataMember(Name = "level")]
-        public Int32 Level { get; set; }
-
-        [DataMember(Name = "created_at")]
-        public String CreatedAtString { get; set; }
-
-        [IgnoreDataMember]
-        public DateTime CreatedAt
+        /// <summary>
+        ///     Navigates to the specified Uri.
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="arg"></param>
+        public static void Navigate(Uri uri, Object arg = null)
         {
-            get
+            PhoneApplicationFrame phoneApplicationFrame = Application.Current.RootVisual as PhoneApplicationFrame;
+            if (phoneApplicationFrame != null)
             {
-                return
-                    (new DanbooruV1DateTimeParser()).Parse(CreatedAtString);
+                NavigationArgument = arg;
+                phoneApplicationFrame.Navigate(uri);
             }
+            else
+                throw new Exception("Navigation Error!");
         }
     }
 }
