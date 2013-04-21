@@ -91,15 +91,6 @@ namespace CardboardBox
                 {
 
                 };
-
-            // Quit App Prompt
-            BackKeyPress += (@s, e) =>
-                {
-                    if (
-                        MessageBox.Show("Are you sure you want to close O!Pix?", "Exit O!Pix?",
-                                        MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
-                        e.Cancel = true;
-                };
         }
 
         private void PageLoaded()
@@ -126,6 +117,14 @@ namespace CardboardBox
                 NoFavTextBlock.Visibility = Visibility.Visible;
             else 
                 NoFavTextBlock.Visibility = Visibility.Collapsed;
+        }
+
+        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
+        {
+            if (
+                MessageBox.Show("Are you sure you want to close O!Pix?", "Exit O!Pix?",
+                                MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                e.Cancel = true;
         }
 
         #region Whats New
