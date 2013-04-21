@@ -13,6 +13,8 @@ namespace CardboardBox.ViewModel
 {
     public class HomeViewModel : ViewModelBase
     {
+        public const String LogoutState = "LogoutState";
+
         public HomeViewModel(HomeView view)
             : base(view.Dispatcher)
         {
@@ -23,8 +25,15 @@ namespace CardboardBox.ViewModel
 
         #region New Posts
 
-        public ObservableCollection<PostTuple> NewPosts
+        public PostTupleCollection NewPosts
         { get { return Session.Instance.NewPosts; } }
+
+        #endregion
+
+        #region Favorites
+
+        public PostTupleCollection Favorites
+        { get { return Session.Instance.Favorites; } }
 
         #endregion
 
@@ -37,8 +46,7 @@ namespace CardboardBox.ViewModel
         {get { return Session.Instance.Level; }}
 
         #endregion
-
-
+        
         #endregion
 
         #region Commands
@@ -75,9 +83,18 @@ namespace CardboardBox.ViewModel
         private ICommand logoutCommand;
         public ICommand LogoutCommand
         {
-            get { return logoutCommand ?? (logoutCommand = new ActionCommand(Session.Instance.LogOut)); }
+            get { return logoutCommand ?? (logoutCommand = new ActionCommand(() =>
+                OnChangeState(LogoutState))); }
         }
 
+        private ICommand settingsCommand;
+        public ICommand SettingsCommand
+        {
+            get
+            {
+                return settingsCommand ?? (settingsCommand = new ActionCommand(() => NavigationHelper.Navigate(new Uri(Constants.SettingsVIew, UriKind.Relative))));
+            }
+        }
 
         #endregion
 
@@ -101,14 +118,21 @@ namespace CardboardBox.ViewModel
 
             ThreadPool.QueueUserWorkItem(callback =>
                 {
-                    PostTuple[] tuples = Session.Instance.GetMoreNewPosts(1);
+                    //PostTuple[] tuples = Session.Instance.GetMoreNewPosts(1);
 
-                    if (tuples.Length < 20)
+                    //if (tuples.Length < 20)
+                        //newPostsAtEnd = true;
+
+                    Int32 page = (Session.Instance.NewPosts.Count * 3) / Session.Instance.Client.PageSize + 1;
+                    Post[] posts = Session.Instance.Client.GetPosts(page, 1, Session.Instance.ResolveQueryString(""));
+
+                    if (posts.Length < Session.Instance.Client.PageSize)
                         newPostsAtEnd = true;
 
                     dispatcher.BeginInvoke(() =>
                         {
-                            tuples.ForEach(t => NewPosts.Add(t));
+                            NewPosts.AddRange(posts);
+
                             newPostsLoading = false;
                             Logging.D("HomeViewModel.LoadMoreNewPosts(): Loading complete!");
                         });

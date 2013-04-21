@@ -43,7 +43,14 @@ namespace CardboardBox
 
             // Create ViewModel
             viewModel = new HomeViewModel(this);
-            viewModel.ChangeState += (@s, e) => VisualStateManager.GoToState(this, e.State, e.Transition);
+            viewModel.ChangeState += (@s, e) => {
+                if (e.State == HomeViewModel.LogoutState)
+                {
+                    if (MessageBox.Show("Are you sure you want to log out?", "O!Pix Log Out", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                        Session.Instance.LogOut();
+                } else 
+                    VisualStateManager.GoToState(this, e.State, e.Transition);
+            };
             DataContext = viewModel;
 
             // Load Appropriate Banner
@@ -84,6 +91,15 @@ namespace CardboardBox
                 {
 
                 };
+
+            // Quit App Prompt
+            BackKeyPress += (@s, e) =>
+                {
+                    if (
+                        MessageBox.Show("Are you sure you want to close O!Pix?", "Exit O!Pix?",
+                                        MessageBoxButton.OKCancel) == MessageBoxResult.Cancel)
+                        e.Cancel = true;
+                };
         }
 
         private void PageLoaded()
@@ -97,6 +113,19 @@ namespace CardboardBox
             // Add AppBar Button
             if (ApplicationBar.Buttons.Count == 0)
                 UpdateAppBarButtons();
+
+            // Set Up App Bar Menu Items
+            if (ApplicationBar.MenuItems.Count == 0)
+            {
+                ApplicationBar.MenuItems.Add(new AppBarMenuItem {Text = "settings", Command = viewModel.SettingsCommand});
+                ApplicationBar.MenuItems.Add(new AppBarMenuItem {Text = "log out", Command = viewModel.LogoutCommand});
+            }
+
+            // Show or hide the "No Favorite" prompt
+            if (Session.Instance.Favorites.Count == 0)
+                NoFavTextBlock.Visibility = Visibility.Visible;
+            else 
+                NoFavTextBlock.Visibility = Visibility.Collapsed;
         }
 
         #region Whats New

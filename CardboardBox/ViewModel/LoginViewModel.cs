@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Windows.Input;
 using CardboardBox.API;
 using CardboardBox.Model;
@@ -15,8 +11,8 @@ namespace CardboardBox.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
-        private const String LoadingState = "LoadingState";
-        private const String ErrorState = "ErrorState";
+        public const String LoadingState = "LoadingState";
+        public const String ErrorState = "ErrorState";
 
         public LoginViewModel(LoginView view)
             : base(view.Dispatcher)
@@ -101,8 +97,25 @@ namespace CardboardBox.ViewModel
                 return;
             }
 
+            if (Session.Instance.Credentials == null)
+            {
+                if (String.IsNullOrEmpty(Username))
+                {
+                    Error = "Username cannot be empty!";
+                    OnChangeState(ErrorState);
+                    return;
+                }
+
+                if (String.IsNullOrEmpty(Password))
+                {
+                    Error = "Password cannot be empty!";
+                    OnChangeState(ErrorState);
+                    return;
+                }
+            }
+
             // Goto Loading State
-            OnChangeState(LoadingState);
+            OnChangeState(LoadingState, Session.Instance.Credentials == null);
 
             // Set Up Credentials
             if (Session.Instance.Credentials == null)

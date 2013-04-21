@@ -20,8 +20,7 @@ namespace CardboardBox.API
 
         private readonly DanbooruCredentials credentials;
         private readonly String server;
-        private Int32 pageSize;
-        
+
         /// <summary>
         /// Constructor.
         /// Initializes a new instance.
@@ -33,12 +32,11 @@ namespace CardboardBox.API
         {
             this.server = "http://" + server;
             this.credentials = credentials;
-            pageSize = pagesize;
+            PageSize = pagesize;
         }
 
 
-        public Int32 PageSize
-        { get { return pageSize; } }
+        public int PageSize { get; private set; }
 
 
         /// <summary>
@@ -90,7 +88,7 @@ namespace CardboardBox.API
             {
 
                 var request = new DanbooruRequest<Post[]>(credentials, server + PostIndex);
-                request.AddArgument("limit", pageSize);
+                request.AddArgument("limit", PageSize);
                 request.AddArgument("tags", query);
                 request.AddArgument("page", i);
 
@@ -114,7 +112,7 @@ namespace CardboardBox.API
                 Post[] posts = request.Result;
                 temp.AddRange(posts);
 
-                if (posts.Length < pageSize) break;
+                if (posts.Length < PageSize) break;
             }
 
             return temp.ToArray();

@@ -89,6 +89,13 @@ namespace CardboardBox
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
             Logging.D("Application Deactivated");
+            if (Logging.LogFile != null)
+            {
+                Logging.LogFile.Flush();
+                //Logging.LogFile.Close();
+            }
+
+            Session.Instance.SaveUserFavorites();
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
@@ -96,6 +103,13 @@ namespace CardboardBox
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
             Logging.D("Application Closing");
+            Session.Instance.SaveUserFavorites();
+            if (Logging.LogFile != null)
+            {
+                Logging.LogFile.Flush();
+                //Logging.LogFile.Close();
+            }
+
         }
 
         // Code to execute if a navigation fails
@@ -103,6 +117,11 @@ namespace CardboardBox
         {
             Logging.D("ERROR: Navigation Failed! ExceptionType = {0}; Message = {1}; StackTrace = {2}",
                       e.Exception.GetType().FullName, e.Exception.Message, e.Exception.StackTrace);
+            if (Logging.LogFile != null)
+            {
+                Logging.LogFile.Flush();
+                //Logging.LogFile.Close();
+            }
 
             if (System.Diagnostics.Debugger.IsAttached)
             {
@@ -117,6 +136,13 @@ namespace CardboardBox
 
             Logging.D("ERROR: Crash! ExceptionType = {0}; Message = {1}; StackTrace = {2}",
                       e.ExceptionObject.GetType().FullName, e.ExceptionObject.Message, e.ExceptionObject.StackTrace);
+            if (Logging.LogFile != null)
+            {
+                Logging.LogFile.Flush();
+                //Logging.LogFile.Close();
+            }
+
+
             MessageBox.Show(String.Format("An exception of type {0} was unhandled in the Opix.", e.ExceptionObject.GetType().Name), "Error", MessageBoxButton.OK);
             if (System.Diagnostics.Debugger.IsAttached)
             {

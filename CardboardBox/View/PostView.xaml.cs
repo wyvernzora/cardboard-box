@@ -52,15 +52,28 @@ namespace CardboardBox
     {
         #region Constants
 
-        private const Int32 PostPageLoadingThreshold = 180;
-
         private const Int32 TagFontSize = 26;
 
         #endregion
 
         private readonly BarloxAnimation animation;
         private readonly PostViewModel viewModel;
-        
+
+        private AppBarButton[] ApplicationBarIcons =
+            new[]
+                {
+                    new AppBarButton
+                        {
+                            IconUri = new Uri("/Assets/SDK/share.png", UriKind.Relative),
+                            Text = "share"
+                        },
+                    new AppBarButton
+                        {
+                            IconUri = new Uri("/Assets/SDK/like.png", UriKind.Relative),
+                            Text = "favorite"
+                        }
+
+                };
 
         public PostView()
         {
@@ -77,6 +90,10 @@ namespace CardboardBox
                 {
                     PostBrowser.NavigateToString(viewModel.PostTemplate);
                 }
+                if (e.State == PostViewModel.FavoriteChangedState)
+                {
+                    ReloadFavButton();
+                }
                 VisualStateManager.GoToState(this, e.State, e.Transition);
             };
             viewModel.Post = NavigationHelper.NavigationArgument as Post;
@@ -91,6 +108,7 @@ namespace CardboardBox
             animation = new BarloxAnimation(animData.Stream);
             animation.FrameChanged += (@s, e) => { LoadingAnimationImage.Source = e.NewFrame.Source; };
             animation.IsEnabled = true;
+            LoadingAnimationImage.Tap += (@s, e) => animation.TriggerEvent("poke");
 
             // Attach Loaded Handler
             Loaded += (@s, e) => PageLoaded();
@@ -122,6 +140,18 @@ namespace CardboardBox
         private void PageLoaded()
         {
             Logging.D("ViewPost: Loaded.");
+            
+            // Set up AppBar
+            if (ApplicationBar.Buttons.Count == 0)
+            {
+                ApplicationBarIcons[0].Command = viewModel.ShareCommand;
+                ApplicationBarIcons[1].Command = viewModel.FavoriteCommand;
+
+                ReloadFavButton();
+
+                ApplicationBar.Buttons.Add(ApplicationBarIcons[0]);
+                ApplicationBar.Buttons.Add(ApplicationBarIcons[1]);
+            }
 
             if (viewModel.Post == null)
                 throw new Exception();
@@ -214,5 +244,20 @@ namespace CardboardBox
             RatingTextBlock.Text = p.Rating.ToString();
         }
 
+        private void ReloadFavButton()
+        {
+
+            if (Session.Instance.FavoriteMap.ContainsKey(viewModel.Post.ID))
+            {
+                ApplicationBarIcons[1].IconUri = new Uri("/Assets/SDK/unlike.png", UriKind.Relative);
+                ApplicationBarIcons[1].Text = "unfavorite";
+            }
+            else
+            {
+                ApplicationBarIcons[1].IconUri = new Uri("/Assets/SDK/like.png", UriKind.Relative);
+                ApplicationBarIcons[1].Text = "favorite";
+            }
+
+        }
     }
 }

@@ -72,9 +72,21 @@ namespace libWyvernzora.Patterns.MVVM
 
         #region IDataErrorInfo 
 
-        protected Dictionary<String, String> errors; 
+        protected Dictionary<String, String> errors;
+        private String error;
 
-        public string Error { get; protected set; }
+        public string Error
+        {
+            get { return error; }
+            set
+            {
+                if (value != error)
+                {
+                    error = value;
+                    OnPropertyChanged("Error");
+                }
+            }
+        }
 
         public string this[string columnName]
         {

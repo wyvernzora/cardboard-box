@@ -50,7 +50,12 @@ namespace CardboardBox
 
             // Create ViewModel
             viewModel = new LoginViewModel(this);
-            viewModel.ChangeState += (@s, e) => VisualStateManager.GoToState(this, e.State, e.Transition);
+            viewModel.ChangeState += (@s, e) =>
+                {
+                    if (e.State == LoginViewModel.ErrorState)
+                        TextBlockError.Text = viewModel.Error;
+                    VisualStateManager.GoToState(this, e.State, e.Transition);
+                };
             DataContext = viewModel;
 
             // Load Appropriate Banner
@@ -101,6 +106,7 @@ namespace CardboardBox
 
             // Attach interactivity
             ImgChibi.Tap += (@s, e) => animation.TriggerEvent("poke");
+            ImgChibi.DoubleTap += (@s, e) => animation.TriggerEvent("knock");
         }
 
         #endregion

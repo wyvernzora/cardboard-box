@@ -1,5 +1,5 @@
 ﻿// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// CardboardBox/Logging.cs
+// CardboardBox/AppBarMenuItem.cs
 // --------------------------------------------------------------------------------
 // Copyright (c) 2013, Jieni Luchijinzhou a.k.a Aragorn Wyvernzora
 // 
@@ -23,24 +23,18 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-using System;
-using System.Diagnostics;
-using System.IO;
+using System.Windows.Input;
+using Microsoft.Phone.Shell;
 
-namespace CardboardBox
+namespace CardboardBox.UI
 {
-    /// <summary>
-    ///     Logging wrapper.
-    /// </summary>
-    public static class Logging
+    public class AppBarMenuItem : ApplicationBarMenuItem
     {
-        public static StreamWriter LogFile { get; set; }
-
-        public static void D(String format, params Object[] args)
+        public AppBarMenuItem()
         {
-            Debug.WriteLine(format, args);
-            if (LogFile != null)
-                LogFile.WriteLine(format, args);
+            Click += (@s, e) => Command.Execute(this);
         }
+
+        public ICommand Command { get; set; }
     }
 }

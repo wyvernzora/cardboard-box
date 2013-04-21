@@ -92,6 +92,7 @@
     <Compile Include="Diagnostics\MemoryDiagnosticsHelper.cs" />
     <Compile Include="NavigationHelper.cs" />
     <Compile Include="UI\AppBarButton.cs" />
+    <Compile Include="UI\AppBarMenuItem.cs" />
     <Compile Include="UI\ListViewInfinityDaemon.cs" />
     <Compile Include="Utilities\ActionCommand.cs" />
     <Compile Include="Utilities\ParamActionCommand.cs" />
@@ -174,6 +175,7 @@
     <Content Include="Assets\SDK\refresh.png" />
     <Content Include="Assets\SDK\search-action.png" />
     <Content Include="Assets\SDK\share.png" />
+    <Content Include="Assets\SDK\unlike.png" />
     <Content Include="Assets\template.html" />
     <Content Include="SplashScreenImage.jpg" />
     <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />

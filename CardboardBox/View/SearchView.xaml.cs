@@ -31,6 +31,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using CardboardBox.UI;
+using CardboardBox.Utilities;
 using CardboardBox.ViewModel;
 using Microsoft.Phone.Shell;
 
@@ -55,7 +56,15 @@ namespace CardboardBox
                 {
                     if (SystemTray.ProgressIndicator != null)
                         SystemTray.ProgressIndicator.IsVisible = e.State == SearchViewModel.LoadingState;
-                    VisualStateManager.GoToState(this, e.State, e.Transition);
+                    if (e.State == HomeViewModel.LogoutState)
+                    {
+                        if (
+                            MessageBox.Show("Are you sure you want to log out?", "O!Pix Log Out",
+                                            MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                            Session.Instance.LogOut();
+                    }
+                    else
+                        VisualStateManager.GoToState(this, e.State, e.Transition);
                 };
             DataContext = viewModel;
 
@@ -97,6 +106,28 @@ namespace CardboardBox
         private void PageLoaded()
         {
             PostTuple.SetViewCommand(viewModel.ViewCommand);
+
+            if (ApplicationBar.Buttons.Count == 0)
+                ApplicationBar.Buttons.Add(new AppBarButton
+                    {
+                        IconUri = new Uri("/Assets/SDK/favs.addto.png", UriKind.Relative),
+                        Text = "bookmark",
+                        Command = viewModel.BookmarkCommand
+                    });
+
+            if (ApplicationBar.MenuItems.Count == 0)
+            {
+                ApplicationBar.MenuItems.Add(new AppBarMenuItem
+                    {
+                        Text = "settings",
+                        Command = viewModel.SettingsCommand
+                    });
+                ApplicationBar.MenuItems.Add(new AppBarMenuItem
+                {
+                    Text = "logout",
+                    Command = viewModel.LogoutCommand
+                });
+            }
 
             infinityDaemon = new ListViewInfinityDaemon(SearchResultList, 60, viewModel.LoadPageCommand);
             PostTuple.SetViewCommand(viewModel.ViewCommand);

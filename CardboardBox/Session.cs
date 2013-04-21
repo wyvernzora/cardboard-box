@@ -27,9 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization.Json;
 using System.Threading;
 using System.Windows;
 using CardboardBox.API;
@@ -79,6 +81,9 @@ namespace CardboardBox
             // Get Isolated Storage Instance
             IsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication();
 
+            // Set Up Logger
+            Logging.LogFile = new StreamWriter(IsolatedStorage.OpenFile("debug.log", FileMode.Append));
+
             // Try to restore user credentials
             settings = IsolatedStorageSettings.ApplicationSettings;
             if (settings.Contains("username") && settings.Contains("hash"))
@@ -105,26 +110,35 @@ namespace CardboardBox
                     {50, new UserLevel(50, "Administrator", Int32.MaxValue)}
                 };
             
+            // Initialize Favories
+            FavoriteMap = new Dictionary<int, Post>();
+            Favorites = new PostTupleCollection();
         }
 
         private readonly IsolatedStorageSettings settings;
         private readonly Dictionary<int, UserLevel> userLevels;
-
-
+        
         /// <summary>
         /// Gets the IsolatedStorage instance for the application.
         /// </summary>
         public IsolatedStorageFile IsolatedStorage { get; private set; }
 
         /// <summary>
-        ///     Gets or sets credentials for current session.
-        /// </summary>
-        public DanbooruCredentials Credentials { get; set; }
-
-        /// <summary>
         /// Gets the Danbooru 2.0 API Client for the session.
         /// </summary>
         public Danbooru2Client Client { get; private set; }
+
+        /// <summary>
+        /// Gets the post viewer template generator for the session.
+        /// </summary>
+        public PostViewerTemplate PostViewerTemplate { get; private set; }
+
+        #region Credentials, User Session and such.
+
+        /// <summary>
+        ///     Gets or sets credentials for current session.
+        /// </summary>
+        public DanbooruCredentials Credentials { get; set; }
 
         /// <summary>
         ///     Gets the current user info.
@@ -136,15 +150,7 @@ namespace CardboardBox
         /// </summary>
         public UserLevel Level { get { return userLevels[User.Level]; }}
 
-        /// <summary>
-        /// Gets the post viewer template generator for the session.
-        /// </summary>
-        public PostViewerTemplate PostViewerTemplate { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the cookie for this session.
-        /// </summary>
-        public CookieContainer Cookie { get; set; }
+        #endregion
 
         #region Session Variables
 
@@ -172,7 +178,17 @@ namespace CardboardBox
         /// Gets or sets arguments for navigation request.
         /// </summary>
         public String NavigationArguments { get; set; }
-        
+
+        /// <summary>
+        /// Gets the mapping between post IDs and Favorite Posts.
+        /// </summary>
+        public Dictionary<Int32, Post> FavoriteMap { get; set; } 
+
+        /// <summary>
+        /// Gets a collection of favorite post tuples.
+        /// </summary>
+        public PostTupleCollection Favorites { get; set; }   
+
         #endregion
 
         #region User Preferences
@@ -222,15 +238,30 @@ namespace CardboardBox
                 throw new Exception("Error!");
         }
 
-        /// <summary>
-        /// Confirms that the user successfully logged in.
-        /// </summary>
-        internal void ConfirmUserLogin()
+        internal String[] ResolveQueryString(String query)
         {
-            settings["username"] = Credentials.Username;
-            settings["hash"] = Credentials.Hash;
-            settings.Save();
+            // Get User Settings
+            String rating = MaxComplement;
+            Boolean hasRating = !String.IsNullOrEmpty(rating);
+            var tags = new List<String>(query.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
+
+            // If there is no rating tag in query and rating filter is enabled, add a rating tag
+            if (!tags.Any(t => t.StartsWith("rating:", StringComparison.CurrentCultureIgnoreCase)) && hasRating) tags.Add(rating);
+
+            return tags.ToArray();
         }
+        
+        internal void AssertUserLevelLimit(String[] query)
+        {
+            // Check for user level enforcement
+            Int32 levelLimit = Level.TagLimit;
+            if (query.Length > levelLimit)
+                throw new UnauthorizedAccessException(
+                    String.Format("Attempt to search {0} tags while user level only allows {1}.", query.Length,
+                                  levelLimit));
+        }
+
+        #region User Account, Profile and Session
 
         /// <summary>
         /// Logs user out.
@@ -253,60 +284,28 @@ namespace CardboardBox
             // Go Back to Login
             NavigationHelper.Navigate(new Uri(Constants.LoginView, UriKind.Relative));
         }
-        
+   
         /// <summary>
-        /// Loads more New Posts on the caller thread.
-        /// May block for a long time.
+        /// Confirms that the user successfully logged in.
         /// </summary>
-        /// <param name="pages"></param>
-        internal PostTuple[] GetMoreNewPosts(Int32 pages)
+        internal void ConfirmUserLogin()
         {
-            Int32 page = (NewPosts.Count * 3) / Client.PageSize + 1;
-            return ExecutePostQuery(page, pages);
+            settings["username"] = Credentials.Username;
+            settings["hash"] = Credentials.Hash;
+            settings.Save();
         }
 
         /// <summary>
-        /// Searches for the specified tag combination.
+        /// Gets the user level object with user permissions.
         /// </summary>
-        /// <param name="startPage"></param>
-        /// <param name="pages"></param>
-        /// <param name="tags"></param>
+        /// <param name="level"></param>
         /// <returns></returns>
-        internal PostTuple[] ExecutePostQuery(Int32 startPage, Int32 pages, params String[] tags)
+        public UserLevel GetUserLevel(Int32 level)
         {
-            // Check for user level enforcement
-            Int32 levelLimit = Level.TagLimit;
-            String[] query = ResolveQueryString(String.Join(" ", tags));
-
-            if (query.Length > levelLimit)
-                throw new UnauthorizedAccessException(
-                    String.Format("Attempt to search {0} tags while user level only allows {1}.", tags.Length,
-                                  levelLimit));
-
-            List<PostTuple> tuples = new List<PostTuple>();
-            Post[] posts = Client.GetPosts(startPage, pages, query);
-
-            posts = posts.PadEnd(posts.Length.Align(3), null);
-
-            for (int j = 0; j < posts.Length - 2; j += 3)
-                tuples.Add(new PostTuple {First = posts[j], Second = posts[j + 1], Third = posts[j + 2]});
-            
-            return tuples.ToArray();
+            return userLevels.ContainsKey(level) ? userLevels[level] : userLevels[-1];
         }
-
-        internal String[] ResolveQueryString(String query)
-        {
-            // Get User Settings
-            String rating = MaxComplement;
-            Boolean hasRating = !String.IsNullOrEmpty(rating);
-            var tags = new List<String>(query.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
-
-            // If there is no rating tag in query and rating filter is enabled, add a rating tag
-            if (!tags.Any(t => t.StartsWith("rating:", StringComparison.CurrentCultureIgnoreCase)) && hasRating) tags.Add(rating);
-
-            return tags.ToArray();
-        }
-        
+  
+        #endregion
 
         #endregion
 
@@ -322,11 +321,11 @@ namespace CardboardBox
 
         #endregion
 
-        public UserLevel GetUserLevel(Int32 level)
-        {
-            return userLevels.ContainsKey(level) ? userLevels[level] : userLevels[-1];
-        }
-
+        /// <summary>
+        /// Initializes the session on a background thread
+        /// and 
+        /// </summary>
+        /// <param name="callback"></param>
         public void InitializeAsync(Action callback)
         {
             BackgroundWorker bw = new BackgroundWorker();
@@ -347,11 +346,49 @@ namespace CardboardBox
 
                     // Load first 3 pages
                     NewPosts = new PostTupleCollection();
-                    PostTuple[] tuples = GetMoreNewPosts(3);
-                    foreach (var t in tuples) NewPosts.Add(t);
+                    //PostTuple[] tuples = GetMoreNewPosts(3);
+                    Post[] newPosts = Client.GetPosts(1, 3, ResolveQueryString(""));
+                    NewPosts.AddRange(newPosts);
+
+                    if (IsolatedStorage.FileExists(User.Name + ".profile"))
+                    {
+                        using (var stream = IsolatedStorage.OpenFile(User.Name + ".fav", FileMode.Open))
+                        {
+                            // Deserialize Favorite Posts
+                            var favSerializer = new DataContractJsonSerializer(typeof(Post[]));
+                            Post[] favs = favSerializer.ReadObject(stream) as Post[] ?? new Post[0];
+
+                            favs.ForEach(p =>
+                                {
+                                    FavoriteMap.Add(p.ID, p);
+                                    Favorites.Add(p);
+                                });
+                        }
+                    }
+                    else
+                    {
+                        // TODO Go to first time use page??
+                    }
                 };
             bw.RunWorkerCompleted += (@s, e) => callback();
             bw.RunWorkerAsync();
+        }
+    
+        public void SaveUserFavorites()
+        {
+            using (var stream = IsolatedStorage.OpenFile(User.Name + ".fav", FileMode.Create))
+            {
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Post[]));
+                Post[] favPosts = FavoriteMap.Values.ToArray();
+                serializer.WriteObject(stream, favPosts);
+            }
+        }
+
+        public void SyncFavoritePosts()
+        {
+            Favorites.Clear();
+            Post[] favs = FavoriteMap.Values.ToArray();
+            favs.ForEach(p => Favorites.Add(p));
         }
     }
 }

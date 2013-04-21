@@ -12,9 +12,11 @@ namespace CardboardBox.UI
     {
         public AppBarButton()
         {
-            Click += (@s, e) => Command.Execute(this);
+            Click += (@s, e) => Command.Execute(CommandParam);
         }
 
         public ICommand Command { get; set; }
+
+        public Object CommandParam { get; set; }
     }
 }

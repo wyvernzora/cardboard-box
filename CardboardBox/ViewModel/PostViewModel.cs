@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using CardboardBox.Model;
 using CardboardBox.UI;
 using CardboardBox.Utilities;
+using Microsoft.Phone.Tasks;
 using libWyvernzora.Patterns.MVVM;
 using libWyvernzora.Core;
 
@@ -24,6 +25,7 @@ namespace CardboardBox.ViewModel
         // Phony States
         public const String BrowserNavigateState = "BrowserNavigate";
         public const String NoCommentState = "NoCommentState";
+        public const String FavoriteChangedState = "FavChanged";
 
 
         public PostViewModel(PostView view) 
@@ -71,6 +73,47 @@ namespace CardboardBox.ViewModel
             }
         }
 
+        private ICommand shareCommand;
+        public ICommand ShareCommand
+        {
+            get
+            {
+                return shareCommand ?? (shareCommand = new ActionCommand(() =>
+                    {
+                        ShareLinkTask shareTask = new ShareLinkTask
+                            {
+                                LinkUri = new Uri(Constants.SiteUrl + Constants.PostShareSuffix + Post.ID),
+                                Title = "Danbooru Post #" + Post.ID,
+                                Message = "Check out this post on Danbooru!"
+                            };
+                        shareTask.Show();
+                    }));
+            }
+        }
+
+        private ICommand favCommand;
+        public ICommand FavoriteCommand
+        {
+            get
+            {
+                return favCommand ?? (favCommand = new ActionCommand(() =>
+                    {
+                        if (!Session.Instance.FavoriteMap.ContainsKey(Post.ID))
+                        {
+                            Session.Instance.FavoriteMap.Add(Post.ID, Post);
+                            Session.Instance.Favorites.Add(Post);
+                        }
+                        else
+                        {
+                            Session.Instance.FavoriteMap.Remove(Post.ID);
+                            Session.Instance.SyncFavoritePosts();
+                        }
+                        
+                        OnChangeState(FavoriteChangedState);
+                    }));
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -82,6 +125,7 @@ namespace CardboardBox.ViewModel
                 {
                     // Parent
                     Comment[] comments = Session.Instance.Client.GetComments(Post.ID);
+                    Array.Reverse(comments);
                 
                     dispatcher.BeginInvoke(() =>
                         {

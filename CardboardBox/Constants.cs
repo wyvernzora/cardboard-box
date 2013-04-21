@@ -28,6 +28,8 @@ namespace CardboardBox
 
         public const String PostView = "/View/PostView.xaml";
 
+        public const String SettingsVIew = "/View/SettingsView.xaml";
+
         #endregion
     }
 }

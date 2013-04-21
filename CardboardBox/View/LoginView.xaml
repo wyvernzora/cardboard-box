@@ -80,7 +80,7 @@
 				<PasswordBox x:Name="TextboxPassword" Margin="0" Grid.Row="3" Password="{Binding Path=Password, Mode=TwoWay}"/>
 				<Button x:Name="ButtonLogin" Content="Login" Margin="35,0,30,0" Grid.Row="5" Command="{Binding Path=LoginCommand}"/>
 				<TextBlock x:Name="TextBlockError" Margin="0" Grid.Row="4" TextWrapping="Wrap"
-					Text="{Binding Error}" FontSize="18.667" VerticalAlignment="Center" 
+					Text="{Binding Path=Error}" FontSize="18.667" VerticalAlignment="Center" 
 					HorizontalAlignment="Center" Foreground="#FFE01919" Height="0"/>
 			</Grid>
 		</Border>

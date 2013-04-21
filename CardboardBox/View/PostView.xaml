@@ -28,10 +28,6 @@
 
 	<phone:PhoneApplicationPage.ApplicationBar>
 		<shell:ApplicationBar IsVisible="false" IsMenuEnabled="true" Mode="Minimized" Opacity="0.85">
-			<shell:ApplicationBar.Buttons>
-				<shell:ApplicationBarIconButton IconUri="/Assets/SDK/share.png" Text="share" />
-				<shell:ApplicationBarIconButton IconUri="/Assets/SDK/like.png" Text="favorite" />
-			</shell:ApplicationBar.Buttons>
 		</shell:ApplicationBar>
 
 	</phone:PhoneApplicationPage.ApplicationBar>

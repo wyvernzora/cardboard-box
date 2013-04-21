@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using CardboardBox.API;
 using CardboardBox.Model;
 using CardboardBox.UI;
 using CardboardBox.Utilities;
@@ -13,14 +14,19 @@ namespace CardboardBox.ViewModel
 {
     public class SearchViewModel : ViewModelBase
     {
+        // Actual States
         public const String LoadingState = "LoadingState";
         public const String LoadedState = "LoadedState";
+
+        // Phony States
+        public const String LogoutState = "LogoutState";
         public const String NoResultState = "NoResultState";
 
         public SearchViewModel(SearchView view) 
             : base(view.Dispatcher)
         {
-            SearchResults = new ObservableCollection<PostTuple>();
+            //SearchResults = new ObservableCollection<PostTuple>();
+            SearchResults = new PostTupleCollection();
         }
 
         #region Data Field
@@ -28,7 +34,7 @@ namespace CardboardBox.ViewModel
         private String searchString ;
         private String[] query;
         
-        public ObservableCollection<PostTuple> SearchResults { get; private set; }
+        public PostTupleCollection SearchResults { get; private set; }
 
         public String SearchString
         {
@@ -38,7 +44,6 @@ namespace CardboardBox.ViewModel
                 if (searchString != value)
                 {
                     searchString = value;
-                    query = Session.Instance.ResolveQueryString(searchString);
                     OnPropertyChanged("SearchString");
                 }
             }
@@ -69,6 +74,31 @@ namespace CardboardBox.ViewModel
             }
         }
 
+        private ICommand bookmarkCommand;
+        public ICommand BookmarkCommand
+        { get { return bookmarkCommand ?? (bookmarkCommand = new ActionCommand(() => { })); } }
+
+
+        private ICommand logoutCommand;
+        public ICommand LogoutCommand
+        {
+            get
+            {
+                return logoutCommand ?? (logoutCommand = new ActionCommand(() =>
+                    OnChangeState(LogoutState)));
+            }
+        }
+
+        private ICommand settingsCommand;
+        public ICommand SettingsCommand
+        {
+            get
+            {
+                return settingsCommand ?? (settingsCommand = new ActionCommand(() => NavigationHelper.Navigate(new Uri(Constants.SettingsVIew, UriKind.Relative))));
+            }
+        }
+
+
         #endregion
 
         #region Methods
@@ -82,6 +112,7 @@ namespace CardboardBox.ViewModel
             // Check User Level and Limits
             Int32 levelLimit = Session.Instance.Level.TagLimit;
 
+            query = Session.Instance.ResolveQueryString(searchString);
             if (query.Length > levelLimit)
             {
                 MessageBox.Show(String.Format("Your user level of {0} only allows you to search {1} tags at once!", 
@@ -114,14 +145,15 @@ namespace CardboardBox.ViewModel
 
             ThreadPool.QueueUserWorkItem(callback =>
                 {
-                    PostTuple[] tuples = Session.Instance.ExecutePostQuery(resultPage++, 1, query);
+                    Session.Instance.AssertUserLevelLimit(query);
+                    Post[] posts = Session.Instance.Client.GetPosts(resultPage++, 1, query);
 
-                    if (tuples.Length < 20) // TODO Constant?
+                    if (posts.Length < Session.Instance.Client.PageSize)
                         resultsAtEnd = true;
 
                     dispatcher.BeginInvoke(() =>
                         {
-                            tuples.ForEach(t => SearchResults.Add(t));
+                            SearchResults.AddRange(posts);
 
                             // Show "no result" if server returned empty array; go to loaded state otherwise
                             OnChangeState(SearchResults.Count == 0 ? NoResultState : LoadedState);
