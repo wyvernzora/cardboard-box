@@ -121,6 +121,7 @@ namespace CardboardBox
                 animation.IsEnabled = false;
                 PivotRoot.IsLocked = false;
                 ApplicationBar.IsVisible = true;
+                ReloadFavButton();
             };
             PostBrowser.NavigationFailed += (@s, e) =>
             {
@@ -246,8 +247,8 @@ namespace CardboardBox
 
         private void ReloadFavButton()
         {
-
-            if (Session.Instance.FavoriteMap.ContainsKey(viewModel.Post.ID))
+            
+            if (viewModel.IsFavorite)
             {
                 ApplicationBarIcons[1].IconUri = new Uri("/Assets/SDK/unlike.png", UriKind.Relative);
                 ApplicationBarIcons[1].Text = "unfavorite";

@@ -18,7 +18,7 @@ using libDanbooru2;
 
 namespace CardboardBox
 {
-    public partial class App : Application
+    public partial class App
     {
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
@@ -72,7 +72,20 @@ namespace CardboardBox
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
-            Logging.D("Application Launching...");
+            Logging.D("App.Launching: Application Launching...");
+
+            if (!Database.Instance.DatabaseExists)
+            {
+                Logging.D("App.Launching: Database not found, creating a new one...");
+                Database.Instance.CreateDatabase();
+                Logging.D("App.Launching: Database successfully created.");
+            }
+            else
+            {
+                Logging.D("App.Launching: Opening Database..");
+                Database.Instance.OpenConnection();
+                Logging.D("App.Launching: Successfully opened database connection.");
+            }
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -94,8 +107,6 @@ namespace CardboardBox
                 Logging.LogFile.Flush();
                 //Logging.LogFile.Close();
             }
-
-            Session.Instance.SaveUserFavorites();
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
@@ -103,13 +114,14 @@ namespace CardboardBox
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
             Logging.D("Application Closing");
-            Session.Instance.SaveUserFavorites();
             if (Logging.LogFile != null)
             {
                 Logging.LogFile.Flush();
                 //Logging.LogFile.Close();
             }
 
+            Logging.D("App.Closing: Closing Database Connection...");
+            Database.Instance.CloseConnection();
         }
 
         // Code to execute if a navigation fails

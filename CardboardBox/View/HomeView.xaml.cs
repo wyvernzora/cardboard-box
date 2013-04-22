@@ -48,7 +48,12 @@ namespace CardboardBox
                 {
                     if (MessageBox.Show("Are you sure you want to log out?", "O!Pix Log Out", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                         Session.Instance.LogOut();
-                } else 
+                }
+                else if (e.State == HomeViewModel.FavChangedState)
+                {
+                    // Show or hide the "No Favorite" prompt
+                    NoFavTextBlock.Visibility = viewModel.Favorites.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+                }else
                     VisualStateManager.GoToState(this, e.State, e.Transition);
             };
             DataContext = viewModel;
@@ -69,6 +74,11 @@ namespace CardboardBox
             // Initialize Infinity Daemons
             NewPostList.Loaded += (@s, e) =>
                 { newPostInfinityDaemon = new ListViewInfinityDaemon(NewPostList, 60, viewModel.LoadNewPostsCommand); };
+            FavoriteList.Loaded += (@s, e) =>
+                {
+                    favPostInfinityDaemon = new ListViewInfinityDaemon(FavoriteList, 60,
+                                                                       viewModel.LoadFavoritePostsCommand);
+                };
 
             // Set up App Bar Buttons
             whatsNewAppbarButtons = new ApplicationBarIconButton[]
@@ -97,6 +107,9 @@ namespace CardboardBox
         {
             PostTuple.SetViewCommand(viewModel.ViewCommand);
 
+            // Reload View Model
+            viewModel.PageLoadedCommand.Execute(null);
+
             // Remove login screen from back stack
             while (NavigationService.BackStack.Any())
                 NavigationService.RemoveBackEntry();
@@ -112,11 +125,8 @@ namespace CardboardBox
                 ApplicationBar.MenuItems.Add(new AppBarMenuItem {Text = "log out", Command = viewModel.LogoutCommand});
             }
 
-            // Show or hide the "No Favorite" prompt
-            if (Session.Instance.Favorites.Count == 0)
-                NoFavTextBlock.Visibility = Visibility.Visible;
-            else 
-                NoFavTextBlock.Visibility = Visibility.Collapsed;
+            
+
         }
 
         protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
@@ -130,6 +140,12 @@ namespace CardboardBox
         #region Whats New
 
         private ListViewInfinityDaemon newPostInfinityDaemon;
+
+        #endregion
+
+        #region Favorites
+
+        private ListViewInfinityDaemon favPostInfinityDaemon;
 
         #endregion
 

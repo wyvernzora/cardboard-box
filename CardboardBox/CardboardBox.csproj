@@ -50,6 +50,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Community.CsharpSqlite.SqlLiteClient.WP7">
+      <HintPath>..\Libraries\Community.CsharpSqlite.SqlLiteClient.WP7.dll</HintPath>
+    </Reference>
+    <Reference Include="Community.CsharpSqlite.WP7">
+      <HintPath>..\Libraries\Community.CsharpSqlite.WP7.dll</HintPath>
+    </Reference>
     <Reference Include="libWyvernzora.WindowsPhone, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\libWyvernzora.WindowsPhone.dll</HintPath>
@@ -75,6 +81,7 @@
   <ItemGroup>
     <Compile Include="API\Danbooru2Client.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="Model\Comment.cs" />
     <Compile Include="API\DanbooruCredentials.cs" />
     <Compile Include="API\DanbooruRequest.cs" />

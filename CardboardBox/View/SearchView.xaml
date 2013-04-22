@@ -46,17 +46,7 @@
 				<VisualStateGroup.Transitions>
 					<VisualTransition GeneratedDuration="0:0:1"/>
 				</VisualStateGroup.Transitions>
-				<VisualState x:Name="LoadingState">
-					<Storyboard>
-						<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.IsEnabled)" Storyboard.TargetName="SearchBox">
-							<DiscreteObjectKeyFrame KeyTime="0">
-								<DiscreteObjectKeyFrame.Value>
-									<System:Boolean>False</System:Boolean>
-								</DiscreteObjectKeyFrame.Value>
-							</DiscreteObjectKeyFrame>
-						</ObjectAnimationUsingKeyFrames>
-					</Storyboard>
-				</VisualState>
+				<VisualState x:Name="LoadingState"/>
 				<VisualState x:Name="LoadedState"/>
 				<VisualState x:Name="NoResultState">
 					<Storyboard>
@@ -90,7 +80,7 @@
 				x:Name="SearchBox" Margin="12,0" TextWrapping="Wrap" 
 				VerticalAlignment="Top" BorderThickness="3" 
 				ActionIcon="/Assets/SDK/search-action.png" Hint="Search"
-				InputScope="Search" Height="80" MaxHeight="80" Grid.ColumnSpan="2"/>
+				InputScope="Search" Height="80" MaxHeight="80" Grid.ColumnSpan="2" />
 			<TextBlock x:Name="SearchMessage" HorizontalAlignment="Right" TextWrapping="Wrap" Text="0 / 2 Tags" VerticalAlignment="Top" FontSize="{StaticResource PhoneFontSizeSmall}" FontFamily="{StaticResource PhoneFontFamilySemiLight}" Foreground="{StaticResource PhoneSubtleBrush}" Margin="0,0,23,0" Grid.Row="1" Grid.Column="1"/>
 			<Image x:Name="AppLogoImage" HorizontalAlignment="Left" Margin="24,-3,0,0" Grid.Row="1" VerticalAlignment="Top" Source="/Assets/application-banner-small-light.png" Height="30"/>
 		</Grid>
@@ -108,26 +98,7 @@
 
 
 			<toolkit:LongListSelector x:Name="SearchResultList" Grid.RowSpan="2" ItemsSource="{Binding Path=SearchResults}"
-					IsFlatList="True" Width="420" HorizontalAlignment="Left" Background="Transparent">
-				
-				<toolkit:LongListSelector.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<Button Height="125" Visibility="{Binding Path=FirstVisibility}" Command="{Binding Path=ViewCommand}" CommandParameter="{Binding Path=First}"
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6" Style="{StaticResource PostTrioButtonTemplate}">
-								<Image Source="{Binding First.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding First}" />
-							</Button>
-							<Button Height="125" Visibility="{Binding Path=SecondVisibility}" Command="{Binding Path=ViewCommand}" CommandParameter="{Binding Path=Second}"
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6" Style="{StaticResource PostTrioButtonTemplate}">
-								<Image Source="{Binding Second.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Second}" />
-							</Button>
-							<Button Height="125" Visibility="{Binding Path=ThirdVisibility}" Command="{Binding Path=ViewCommand}" CommandParameter="{Binding Path=Third}"
-										BorderThickness="1" BorderBrush="Gray" Background="#80000000" Width="125" Margin="6" Style="{StaticResource PostTrioButtonTemplate}">
-								<Image Source="{Binding Third.PreviewUrl}" Stretch="UniformToFill" Tag="{Binding Third}" />
-							</Button>
-						</StackPanel>
-					</DataTemplate>
-				</toolkit:LongListSelector.ItemTemplate>
+					IsFlatList="True" Width="420" HorizontalAlignment="Left" Background="Transparent" ItemTemplate="{StaticResource PostTupleTemplate}">
 
 			</toolkit:LongListSelector>
 			

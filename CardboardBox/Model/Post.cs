@@ -99,6 +99,9 @@ namespace CardboardBox.Model
         #region Additional properties (not serialized)
 
         [IgnoreDataMember]
+        public Int64 LastAddTime { get; set; }
+
+        [IgnoreDataMember]
         public Uri PreviewUrl
         {
             get { return new Uri(Constants.SiteUrl + Constants.PreviewDir + MD5 + ".jpg"); }
@@ -117,6 +120,25 @@ namespace CardboardBox.Model
                     size = size / 1024.0;
                 }
                 return String.Format("{0:0.#} {1} ({2}x{3})", size, SizeUnits[order], Width, Height);
+            }
+        }
+
+        [IgnoreDataMember]
+        public String ParentIdString
+        {
+            get
+            {
+                return
+                    ParentID.HasValue ? ParentID.Value.ToString() : null;
+            }
+            set
+            {
+                if (!String.IsNullOrEmpty(value))
+                    ParentID = Int32.Parse(value);
+                else
+                {
+                    ParentID = null;
+                }
             }
         }
 

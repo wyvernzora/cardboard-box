@@ -26,17 +26,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
-using System.Net;
 using System.Runtime.Serialization.Json;
-using System.Threading;
 using System.Windows;
 using CardboardBox.API;
 using CardboardBox.Model;
-using CardboardBox.UI;
 using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
 using libDanbooru2;
@@ -82,7 +78,8 @@ namespace CardboardBox
             IsolatedStorage = IsolatedStorageFile.GetUserStoreForApplication();
 
             // Set Up Logger
-            Logging.LogFile = new StreamWriter(IsolatedStorage.OpenFile("debug.log", FileMode.Append));
+            if (Logging.LogFile == null)
+                Logging.LogFile = new StreamWriter(IsolatedStorage.OpenFile("debug.log", FileMode.Append));
 
             // Try to restore user credentials
             settings = IsolatedStorageSettings.ApplicationSettings;
@@ -112,7 +109,8 @@ namespace CardboardBox
             
             // Initialize Favories
             FavoriteMap = new Dictionary<int, Post>();
-            Favorites = new PostTupleCollection();
+
+            ReloadFavorites = true;
         }
 
         private readonly IsolatedStorageSettings settings;
@@ -187,7 +185,7 @@ namespace CardboardBox
         /// <summary>
         /// Gets a collection of favorite post tuples.
         /// </summary>
-        public PostTupleCollection Favorites { get; set; }   
+        public Boolean ReloadFavorites { get; set; }   
 
         #endregion
 
@@ -339,6 +337,13 @@ namespace CardboardBox
                     // Get User Profile
                     User = Client.GetUser(Credentials.Username);
 
+                    // Load User Settings
+                    if (!Database.Instance.HasUser(User))
+                        Database.Instance.AddUser(User, "s", "new");
+                    Database.UserConfig config = Database.Instance.GetUserConfig(User);
+                    MaxRating = RatingEx.Parse(config.Rating);
+                    
+
                     Logging.D("Session.InitializeAsync(): Loading posts");
 
                     // Load Template generator
@@ -349,46 +354,9 @@ namespace CardboardBox
                     //PostTuple[] tuples = GetMoreNewPosts(3);
                     Post[] newPosts = Client.GetPosts(1, 3, ResolveQueryString(""));
                     NewPosts.AddRange(newPosts);
-
-                    if (IsolatedStorage.FileExists(User.Name + ".profile"))
-                    {
-                        using (var stream = IsolatedStorage.OpenFile(User.Name + ".fav", FileMode.Open))
-                        {
-                            // Deserialize Favorite Posts
-                            var favSerializer = new DataContractJsonSerializer(typeof(Post[]));
-                            Post[] favs = favSerializer.ReadObject(stream) as Post[] ?? new Post[0];
-
-                            favs.ForEach(p =>
-                                {
-                                    FavoriteMap.Add(p.ID, p);
-                                    Favorites.Add(p);
-                                });
-                        }
-                    }
-                    else
-                    {
-                        // TODO Go to first time use page??
-                    }
                 };
             bw.RunWorkerCompleted += (@s, e) => callback();
             bw.RunWorkerAsync();
-        }
-    
-        public void SaveUserFavorites()
-        {
-            using (var stream = IsolatedStorage.OpenFile(User.Name + ".fav", FileMode.Create))
-            {
-                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Post[]));
-                Post[] favPosts = FavoriteMap.Values.ToArray();
-                serializer.WriteObject(stream, favPosts);
-            }
-        }
-
-        public void SyncFavoritePosts()
-        {
-            Favorites.Clear();
-            Post[] favs = FavoriteMap.Values.ToArray();
-            favs.ForEach(p => Favorites.Add(p));
         }
     }
 }

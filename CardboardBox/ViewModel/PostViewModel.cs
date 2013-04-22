@@ -26,8 +26,7 @@ namespace CardboardBox.ViewModel
         public const String BrowserNavigateState = "BrowserNavigate";
         public const String NoCommentState = "NoCommentState";
         public const String FavoriteChangedState = "FavChanged";
-
-
+        
         public PostViewModel(PostView view) 
             : base(view.Dispatcher)
         {
@@ -53,6 +52,8 @@ namespace CardboardBox.ViewModel
                                        Post);
             }
         }
+
+        public Boolean IsFavorite { get; set; }
 
         #endregion
 
@@ -98,17 +99,14 @@ namespace CardboardBox.ViewModel
             {
                 return favCommand ?? (favCommand = new ActionCommand(() =>
                     {
-                        if (!Session.Instance.FavoriteMap.ContainsKey(Post.ID))
-                        {
-                            Session.Instance.FavoriteMap.Add(Post.ID, Post);
-                            Session.Instance.Favorites.Add(Post);
-                        }
+                        if (IsFavorite)
+                            Database.Instance.RemoveFavorite(Session.Instance.User, Post);
                         else
-                        {
-                            Session.Instance.FavoriteMap.Remove(Post.ID);
-                            Session.Instance.SyncFavoritePosts();
-                        }
-                        
+                            Database.Instance.AddFavorite(Session.Instance.User, Post);
+
+                        Session.Instance.ReloadFavorites = true;
+                        IsFavorite = !IsFavorite;
+
                         OnChangeState(FavoriteChangedState);
                     }));
             }
@@ -127,6 +125,9 @@ namespace CardboardBox.ViewModel
                     Comment[] comments = Session.Instance.Client.GetComments(Post.ID);
                     Array.Reverse(comments);
                 
+                    // Favorite
+                    IsFavorite = Database.Instance.HasFavorite(Session.Instance.User, Post);
+
                     dispatcher.BeginInvoke(() =>
                         {
                             comments.ForEach(c => Comments.Add(c));

@@ -14,11 +14,13 @@ namespace CardboardBox.ViewModel
     public class HomeViewModel : ViewModelBase
     {
         public const String LogoutState = "LogoutState";
+        public const String FavChangedState = "FavChangedState";
 
         public HomeViewModel(HomeView view)
             : base(view.Dispatcher)
         {
             PostTuple.SetViewCommand(ViewCommand);
+            favorites = new PostTupleCollection();
         }
 
         #region Data Fields
@@ -32,8 +34,10 @@ namespace CardboardBox.ViewModel
 
         #region Favorites
 
+        private PostTupleCollection favorites;
+
         public PostTupleCollection Favorites
-        { get { return Session.Instance.Favorites; } }
+        { get { return favorites; } }
 
         #endregion
 
@@ -50,6 +54,25 @@ namespace CardboardBox.ViewModel
         #endregion
 
         #region Commands
+
+        private ICommand pageLoadCommand;
+        public ICommand PageLoadedCommand
+        {
+            get
+            {
+                return (pageLoadCommand ?? (pageLoadCommand = new ActionCommand(() =>
+                    {
+                        if (Session.Instance.ReloadFavorites)
+                        {
+                            lastAddTime = Int64.MaxValue;
+                            favAtEnd = false;
+                            favorites.Clear();
+                            LoadMoreFavPosts();
+                            Session.Instance.ReloadFavorites = false;
+                        }
+                    })));
+            }
+        }
 
         private ICommand loadNewPostsCommand;
         public ICommand LoadNewPostsCommand
@@ -96,14 +119,20 @@ namespace CardboardBox.ViewModel
             }
         }
 
+        private ICommand loadFavPostsCommand;
+        public ICommand LoadFavoritePostsCommand
+        {
+            get { return loadFavPostsCommand ?? (loadFavPostsCommand = new ActionCommand(LoadMoreFavPosts)); }
+        }
+
         #endregion
 
         #region Methods and Related Stuff
 
         #region New Posts
 
-        private Boolean newPostsLoading = false;
-        private Boolean newPostsAtEnd = false;
+        private Boolean newPostsLoading;
+        private Boolean newPostsAtEnd;
 
         private void LoadMoreNewPosts()
         {
@@ -118,11 +147,6 @@ namespace CardboardBox.ViewModel
 
             ThreadPool.QueueUserWorkItem(callback =>
                 {
-                    //PostTuple[] tuples = Session.Instance.GetMoreNewPosts(1);
-
-                    //if (tuples.Length < 20)
-                        //newPostsAtEnd = true;
-
                     Int32 page = (Session.Instance.NewPosts.Count * 3) / Session.Instance.Client.PageSize + 1;
                     Post[] posts = Session.Instance.Client.GetPosts(page, 1, Session.Instance.ResolveQueryString(""));
 
@@ -137,6 +161,46 @@ namespace CardboardBox.ViewModel
                             Logging.D("HomeViewModel.LoadMoreNewPosts(): Loading complete!");
                         });
                 });
+        }
+
+        #endregion
+
+        #region Favorites
+
+        private Int64 lastAddTime;
+        private Boolean favLoading;
+        private Boolean favAtEnd;
+
+        private void LoadMoreFavPosts()
+        {
+            if (favLoading)
+                return;
+            if (favAtEnd)
+                return;
+
+            favLoading = true;
+
+            Logging.D("HomeViewModel.LoadMoreFavPosts(): Loading more posts...");
+
+            ThreadPool.QueueUserWorkItem(callback =>
+                {
+                    Post[] posts = Database.Instance.GetFavorites(Session.Instance.User, lastAddTime);
+
+                    if (posts.Length < Database.PostPageSize)
+                        favAtEnd = true;
+                    else
+                        lastAddTime = posts[posts.Length - 1].LastAddTime;
+
+                    dispatcher.BeginInvoke(() =>
+                        {
+                            favorites.AddRange(posts);
+                            favLoading = false;
+
+                            Logging.D("HomeViewModel.LoadMoreFavPosts(): More posts loaded!");
+                            OnChangeState(FavChangedState);
+                        });
+                });
+
         }
 
         #endregion
