@@ -55,11 +55,7 @@
             		</TextBlock>
             	</Grid>
             </controls:PanoramaItem>
-
-            <!--Panorama item four-->
-            <controls:PanoramaItem x:Name="BookmarkPanoramaItem" Header="bookmarks">
-                <Grid/>
-            </controls:PanoramaItem>
+        
             <controls:PanoramaItem x:Name="UserProfilePanoramaItem" Header="user profile">
             	<Grid>
             		<ScrollViewer Margin="0" 

@@ -167,11 +167,6 @@ namespace CardboardBox
                     break;
                 case 2:
                     ApplicationBar.Mode = ApplicationBarMode.Default;
-                    foreach (var v in subscriptionAppbarButtons)
-                        ApplicationBar.Buttons.Add(v);
-                    break;
-                case 3:
-                    ApplicationBar.Mode = ApplicationBarMode.Default;
                     foreach (var v in profileAppbarButtons)
                         ApplicationBar.Buttons.Add(v);
                     break;
