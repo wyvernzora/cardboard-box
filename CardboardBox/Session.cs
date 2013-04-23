@@ -37,6 +37,7 @@ using CardboardBox.Utilities;
 using Microsoft.Phone.Controls;
 using libDanbooru2;
 using libWyvernzora.Core;
+using System.Threading;
 
 namespace CardboardBox
 {
@@ -315,6 +316,11 @@ namespace CardboardBox
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
+
+            ThreadPool.QueueUserWorkItem(callback =>
+                {
+                    Database.Instance.AddUser(User, MaxRating.ToString(), "new");
+                });
         }
 
         #endregion

@@ -9,6 +9,7 @@ using CardboardBox.UI;
 using CardboardBox.Utilities;
 using libWyvernzora.Patterns.MVVM;
 using libWyvernzora.Core;
+using System.Net;
 
 namespace CardboardBox.ViewModel
 {
@@ -119,6 +120,34 @@ namespace CardboardBox.ViewModel
                     Session.Instance.Level.Name, levelLimit), "Hey hey! Slow down!", MessageBoxButton.OK);
                 return;
             }
+
+            // Hook up to stats server
+            ThreadPool.QueueUserWorkItem(callback =>
+                {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.CreateHttp(@"http://devfish.org/opix/query.php");
+                    request.Method = "POST";
+
+                    Byte[] data = System.Text.Encoding.UTF8.GetBytes("query=" + HttpUtility.UrlEncode(searchString));
+
+                    request.BeginGetRequestStream(c =>
+                        {
+                            // Get Response
+                            if (c == null) throw new Exception();
+
+                            try
+                            {
+                                libWyvernzora.IO.StreamEx stream = new libWyvernzora.IO.StreamEx(request.EndGetRequestStream(c));
+                                stream.WriteBytes(data);
+                                stream.Close();
+                            }
+                            catch
+                            {
+                                // suppress
+                            }
+                        }, request);
+
+                    request.BeginGetResponse(c => { /* suppress */ }, null);
+                });
 
             // Clear Current Results
             SearchResults.Clear();
